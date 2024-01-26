@@ -17,4 +17,8 @@ class Reef extends Model
     {
         return $this->hasMany(Point::class);
     }
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(Session::class);
+    }
 }
