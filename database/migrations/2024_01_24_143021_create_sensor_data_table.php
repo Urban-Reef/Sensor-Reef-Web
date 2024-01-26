@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('sensor_data', function (Blueprint $table) {
             $table->id();
+
+            $table->timestamp('measured_at')->nullable(false)->useCurrent();
             $table->foreignId('sensor_id')->constrained();
+            $table->unique(['sensor_id', 'measured_at']);
+
             $table->double('value');
-            $table->timestamps();
+
         });
     }
 

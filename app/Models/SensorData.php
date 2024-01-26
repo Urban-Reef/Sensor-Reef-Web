@@ -10,6 +10,8 @@ class SensorData extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function sensor(): BelongsTo
     {
        return $this->belongsTo(Sensor::class);
