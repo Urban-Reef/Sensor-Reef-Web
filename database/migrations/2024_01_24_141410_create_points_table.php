@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('reef_id')->constrained();
             $table->integer('number');
             $table->timestamps();
+            $table->unique(['reef_id', 'number']);
         });
     }
 
