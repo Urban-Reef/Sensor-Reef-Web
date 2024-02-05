@@ -14,6 +14,7 @@ class ReefController extends Controller
     public function index()
     {
         //
+        return Reef::all();
     }
 
     /**
