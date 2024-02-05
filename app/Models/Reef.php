@@ -10,6 +10,8 @@ class Reef extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * Get the points defined on the Reef.
      */
