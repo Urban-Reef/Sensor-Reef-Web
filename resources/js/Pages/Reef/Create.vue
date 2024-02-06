@@ -1,6 +1,5 @@
 <script setup>
-import {reactive} from "vue";
-import {router, useForm} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 
 const form = useForm({
     name: '',
@@ -37,7 +36,7 @@ const addSensor = (pointIndex) => {
     });
 }
 const removeSensor = (pointIndex, sensorIndex) => {
-    //Find the right point using pointIndex, then delete the sensor using Splice.
+    //Find the right point using pointIndex, then delete the sensor using splice.
     form.points[pointIndex].sensors.splice(sensorIndex, 1);
 }
 
@@ -74,7 +73,6 @@ const removeSensor = (pointIndex, sensorIndex) => {
                     name="lat"
                     type="number"
                 />
-<!--                TODO: Add points form-->
             </div>
             <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
@@ -106,7 +104,7 @@ const removeSensor = (pointIndex, sensorIndex) => {
                 <button @click="removePoint">Delete</button>
             </div>
             <button @click="addPoint">Add Point</button>
-
+            <button type="submit" @click="form.post('/reefs')">Submit</button>
         </form>
     </section>
 </template>

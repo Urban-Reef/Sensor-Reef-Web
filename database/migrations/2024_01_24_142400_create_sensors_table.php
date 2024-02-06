@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sensors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('points_id')->constrained();
+            $table->foreignId('point_id')->constrained();
             $table->string('type');
             $table->string('unit');
             $table->timestamps();

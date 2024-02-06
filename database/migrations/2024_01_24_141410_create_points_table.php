@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->foreignId('reef_id')->constrained();
-            $table->integer('number');
+            $table->integer('position');
             $table->timestamps();
-            $table->unique(['reef_id', 'number']);
+            $table->unique(['reef_id', 'position']);
         });
     }
 

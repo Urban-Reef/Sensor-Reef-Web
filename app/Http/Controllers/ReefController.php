@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Point;
 use App\Models\Reef;
+use App\Models\Sensor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,8 +15,8 @@ class ReefController extends Controller
      */
     public function index()
     {
-        //
-        return Reef::all();
+        //Currently return object with all reefs.
+        return Reef::with('points.sensors')->get();
     }
 
     /**
@@ -30,6 +32,8 @@ class ReefController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->points);
+        //First create the reef.
         $reef = new Reef;
         $reef->name = $request->name;
         $reef->longitude = $request->long;
@@ -38,6 +42,27 @@ class ReefController extends Controller
         $reef->url = 'test';
         $reef->save();
 
+        //Get the id of the newly created Reef.
+        $createdReef = Reef::OrderBy('id', 'desc')->select('id')->first();
+        //Loop through all the points.
+        foreach ($request->points as $pointIndex => $point) {
+            $newPoint = new Point;
+            $newPoint->reef_id = $createdReef->id;
+            //Use the index of the foreach loop to define position.
+            $newPoint->position = $pointIndex + 1;
+            $newPoint->save();
+
+            //get the id of the newly created point
+            $createdPoint = Point::OrderBy('id', 'desc')->select('id')->first();
+            //Loop through all the sensor in the point.
+            foreach ($point['sensors'] as $sensor){
+                $newSensor = new Sensor;
+                $newSensor->point_id = $createdPoint->id;
+                $newSensor->type = $sensor['type'];
+                $newSensor->unit = $sensor['unit'];
+                $newSensor->save();
+            }
+        }
 //        TODO: Return or alert
     }
 
