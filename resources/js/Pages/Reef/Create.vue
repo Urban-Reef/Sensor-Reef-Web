@@ -4,8 +4,8 @@ import {useForm} from "@inertiajs/vue3";
 const form = useForm({
     name: '',
     placedOn: '',
-    long: '',
-    lat: '',
+    longitude: '',
+    latitude: '',
     points: [{
         sensors: [{
             type: '',
@@ -53,25 +53,31 @@ const removeSensor = (pointIndex, sensorIndex) => {
                     v-model="form.name"
                     name="name"
                     type="text"
+                    required
                 />
                 <label for="datePlaced">Date of placement:</label>
                 <input
                     v-model="form.placedOn"
                     name="datePlaced"
                     type="date"
+                    required
                 />
 <!--                TODO: integrate map -->
                 <label for="long">Longitude:</label>
                 <input
-                    v-model="form.long"
+                    v-model="form.longitude"
                     name="long"
                     type="number"
+                    step="any"
+                    required
                 />
                 <label for="lat">Latitude:</label>
                 <input
-                    v-model="form.lat"
+                    v-model="form.latitude"
                     name="lat"
                     type="number"
+                    step="any"
+                    required
                 />
             </div>
             <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">

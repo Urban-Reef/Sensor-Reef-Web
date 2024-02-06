@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReefRequest;
 use App\Models\Point;
 use App\Models\Reef;
 use App\Models\Sensor;
@@ -30,14 +31,14 @@ class ReefController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreReefRequest $request)
     {
-        //dd($request->points);
-        //First create the reef.
+        //Create the reef.
+        //TODO: Set fillable feelds, change to create method.
         $reef = new Reef;
         $reef->name = $request->name;
-        $reef->longitude = $request->long;
-        $reef->latitude = $request->lat;
+        $reef->longitude = $request->longitude;
+        $reef->latitude = $request->latitude;
         $reef->placed_on = $request->placedOn;
         $reef->url = 'test';
         $reef->save();

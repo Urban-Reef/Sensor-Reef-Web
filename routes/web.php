@@ -31,6 +31,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 //Resource Route for Reefs, automatically creates all CRUD routes.
+Route::resource('reefs', ReefController::class);
 
 Route::middleware('auth')->group(function () {
     //Profile routes created during scaffolding
@@ -40,6 +41,5 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::resource('reefs', ReefController::class);
 
 require __DIR__.'/auth.php';
