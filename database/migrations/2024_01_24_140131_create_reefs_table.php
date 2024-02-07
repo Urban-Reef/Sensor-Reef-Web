@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('longitude', 9, 6);
             $table->decimal('latitude', 8, 6);
-            $table->string('url');
+            $table->string('diagram');
             $table->timestamp('placed_on')->nullable(false)->useCurrent();
         });
     }
