@@ -27,6 +27,7 @@ class StoreReefRequest extends FormRequest
             'placedOn' => 'required|date',
             'longitude' => 'required|decimal:6',
             'latitude' => 'required|decimal:6',
+            'diagram' => 'nullable|image|mimes:jpeg,png,jpg',
             'points.*.sensors.*.type' => 'required|string',
             'points.*.sensors.*.unit' => 'required|string',
         ];

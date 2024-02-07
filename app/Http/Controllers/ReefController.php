@@ -7,6 +7,7 @@ use App\Models\Point;
 use App\Models\Reef;
 use App\Models\Sensor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ReefController extends Controller
@@ -40,7 +41,14 @@ class ReefController extends Controller
         $reef->longitude = $request->longitude;
         $reef->latitude = $request->latitude;
         $reef->placed_on = $request->placedOn;
-        $reef->url = 'test';
+
+        //store image and save url to database.
+        //TODO: Hide images behind authentication and optimise images?
+        if ($request->hasFile('diagram')){
+            $diagram = $request->file('diagram');
+            $reef->diagram = $diagram->storeAs('/', $diagram->hashName(), 'public');
+        }
+
         $reef->save();
 
         //Get the id of the newly created Reef.

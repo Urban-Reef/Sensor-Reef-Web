@@ -4,8 +4,9 @@ import {useForm} from "@inertiajs/vue3";
 const form = useForm({
     name: '',
     placedOn: '',
-    longitude: '',
-    latitude: '',
+    longitude: null,
+    latitude: null,
+    diagram: null,
     points: [{
         sensors: [{
             type: '',
@@ -46,6 +47,7 @@ const removeSensor = (pointIndex, sensorIndex) => {
     <h1>Set-up Reef</h1>
     <section>
         <form @submit.prevent>
+            <!-- General information section of form -->
             <div class="subsection">
                 <h2>General Information</h2>
                 <label for="name">Name:</label>
@@ -62,7 +64,7 @@ const removeSensor = (pointIndex, sensorIndex) => {
                     type="date"
                     required
                 />
-<!--                TODO: integrate map -->
+                <!-- TODO: integrate map -->
                 <label for="long">Longitude:</label>
                 <input
                     v-model="form.longitude"
@@ -79,8 +81,14 @@ const removeSensor = (pointIndex, sensorIndex) => {
                     step="any"
                     required
                 />
+                <label for="diagram">Upload diagram:</label>
+                <input type="file"
+                       name="diagram"
+                       @input="form.diagram = $event.target.files[0]"
+                >
             </div>
-            <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
+            <!-- point & sensor section of form !-->
+            <div v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
                 <table v-show="point.sensors.length > 0">
                     <tr>
