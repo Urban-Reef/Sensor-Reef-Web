@@ -11,6 +11,12 @@ class Sensor extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'point_id',
+        'type',
+        'unit'
+    ];
+
     public function point(): BelongsTo
     {
         return $this->belongsTo(Point::class);

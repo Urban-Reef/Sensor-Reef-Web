@@ -45,21 +45,18 @@ class ReefController extends Controller
 
         //Loop through all the points.
         foreach ($request->points as $pointIndex => $point) {
-            $newPoint = new Point;
-            $newPoint->reef_id = $reef->id;
-            //Use the index of the foreach loop to define position.
-            $newPoint->position = $pointIndex + 1;
-            $newPoint->save();
+            $newPoint = Point::create([
+               'reef_id' => $reef->id,
+               'position' => $pointIndex + 1 //Use the index to define position.
+            ]);
 
-            //get the id of the newly created point
-            $createdPoint = Point::OrderBy('id', 'desc')->select('id')->first();
-            //Loop through all the sensor in the point.
+            //Loop through all the sensors.
             foreach ($point['sensors'] as $sensor){
-                $newSensor = new Sensor;
-                $newSensor->point_id = $createdPoint->id;
-                $newSensor->type = $sensor['type'];
-                $newSensor->unit = $sensor['unit'];
-                $newSensor->save();
+                Sensor::create([
+                    'point_id' => $newPoint->id,
+                    'type' => $sensor['type'],
+                    'unit' => $sensor['unit']
+                ]);
             }
         }
 //        TODO: Return or alert

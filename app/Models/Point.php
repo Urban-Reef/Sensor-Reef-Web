@@ -11,6 +11,11 @@ class Point extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'reef_id',
+        'position'
+    ];
+
     public function reef(): BelongsTo
     {
         return $this->belongsTo(Reef::class);
