@@ -12,6 +12,17 @@ class Reef extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'name',
+        'longitude',
+        'latitude',
+        'placed_on'
+        ];
+
+    protected $casts = [
+        'placed_on' => 'date:Y-m-d'
+    ];
+
     /**
      * Get the points defined on the Reef.
      */

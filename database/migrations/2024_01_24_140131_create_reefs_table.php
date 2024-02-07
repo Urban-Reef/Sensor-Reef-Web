@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('reefs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->decimal('longitude', 9, 6);
             $table->decimal('latitude', 8, 6);
-            $table->string('diagram');
-            $table->timestamp('placed_on')->nullable(false)->useCurrent();
+            $table->string('diagram')->nullable();
+            $table->timestamp('placed_on')->useCurrent();
         });
     }
 

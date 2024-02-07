@@ -35,28 +35,18 @@ class ReefController extends Controller
     public function store(StoreReefRequest $request)
     {
         //Create the reef.
-        //TODO: Set fillable feelds, change to create method.
-        $reef = new Reef;
-        $reef->name = $request->name;
-        $reef->longitude = $request->longitude;
-        $reef->latitude = $request->latitude;
-        $reef->placed_on = $request->placedOn;
+        $reef = Reef::create([
+            'name' => $request->name,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
+            'placed_on' => $request->placedOn
+        ]);
+        $this->storeDiagram($request, $reef);
 
-        //store image and save url to database.
-        //TODO: Hide images behind authentication and optimise images?
-        if ($request->hasFile('diagram')){
-            $diagram = $request->file('diagram');
-            $reef->diagram = $diagram->storeAs('/', $diagram->hashName(), 'public');
-        }
-
-        $reef->save();
-
-        //Get the id of the newly created Reef.
-        $createdReef = Reef::OrderBy('id', 'desc')->select('id')->first();
         //Loop through all the points.
         foreach ($request->points as $pointIndex => $point) {
             $newPoint = new Point;
-            $newPoint->reef_id = $createdReef->id;
+            $newPoint->reef_id = $reef->id;
             //Use the index of the foreach loop to define position.
             $newPoint->position = $pointIndex + 1;
             $newPoint->save();
@@ -73,6 +63,14 @@ class ReefController extends Controller
             }
         }
 //        TODO: Return or alert
+    }
+    protected function storeDiagram($request, $reef): void
+    {
+        //if file not present return out of the function.
+        if ($request->hasFile('diagram')) return;
+        $diagram = $request->file('diagram'); //grab file from request.
+        $reef->diagram = $diagram->storeAs('/', $diagram->hashName(), 'public'); //store image in public disk and save url in database.
+        $reef->save();
     }
 
     /**
