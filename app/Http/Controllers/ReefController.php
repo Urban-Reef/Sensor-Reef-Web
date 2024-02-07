@@ -66,8 +66,8 @@ class ReefController extends Controller
     }
     protected function storeDiagram($request, $reef): void
     {
-        //if file not present return out of the function.
-        if ($request->hasFile('diagram')) return;
+        //if file is not present return out of the function.
+        if (!$request->hasFile('diagram')) return;
         $diagram = $request->file('diagram'); //grab file from request.
         $reef->diagram = $diagram->storeAs('/', $diagram->hashName(), 'public'); //store image in public disk and save url in database.
         $reef->save();

@@ -23,7 +23,7 @@ class StoreReefRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|unique:reefs,name|string|max:255',
             'placedOn' => 'required|date',
             'longitude' => 'required|decimal:6',
             'latitude' => 'required|decimal:6',
