@@ -1,5 +1,18 @@
 <script setup>
 import {useForm} from "@inertiajs/vue3";
+import 'leaflet/dist/leaflet.css';
+import leaflet from 'leaflet';
+import {onMounted} from "vue";
+
+onMounted(() => {
+    const map = leaflet.map('map').setView([51.897839, 4.417300], 17);
+    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    map.on('click', (e) => {console.log(e)});
+});
 
 const form = useForm({
     name: '',
@@ -87,6 +100,7 @@ const removeSensor = (pointIndex, sensorIndex) => {
                        @input="form.diagram = $event.target.files[0]"
                 >
             </div>
+            <div id="map"></div>
             <!-- point & sensor section of form !-->
             <div v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
@@ -124,5 +138,7 @@ const removeSensor = (pointIndex, sensorIndex) => {
 </template>
 
 <style scoped>
-
+#map {
+    height: 360px;
+}
 </style>
