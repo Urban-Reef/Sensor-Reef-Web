@@ -4,16 +4,6 @@ import 'leaflet/dist/leaflet.css';
 import leaflet from 'leaflet';
 import {onMounted} from "vue";
 
-onMounted(() => {
-    const map = leaflet.map('map').setView([51.897839, 4.417300], 17);
-    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    map.on('click', (e) => {console.log(e)});
-});
-
 const form = useForm({
     name: '',
     placedOn: '',
@@ -27,6 +17,39 @@ const form = useForm({
         }]
     }]
 });
+
+// TODO: Break map out into its own component.
+let map;
+let marker;
+
+const loadMap = () => {
+    //create map
+    map = leaflet.map('map').setView([51.897839, 4.417300], 17);
+
+    //get tile layer.
+    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    //create marker used to track position.
+    marker = leaflet.marker([51.897839, 4.417300]).addTo(map);
+
+    map.on('click', setLatitudeLongitude);
+}
+const setLatitudeLongitude = (e) => {
+    //Round latitude and longitude to 6th decimal.
+    const lat = Number(e.latlng.lat.toFixed(6));
+    const lng = Number(e.latlng.lng.toFixed(6));
+
+    //set form lat and long.
+    form.latitude = lat;
+    form.longitude = lng;
+
+    //set marker lat and lng.
+    marker.setLatLng([lat, lng]);
+}
+onMounted(loadMap);
 
 const addPoint = () => {
     const newPoint = {
@@ -77,7 +100,6 @@ const removeSensor = (pointIndex, sensorIndex) => {
                     type="date"
                     required
                 />
-                <!-- TODO: integrate map -->
                 <label for="long">Longitude:</label>
                 <input
                     v-model="form.longitude"
