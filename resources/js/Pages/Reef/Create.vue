@@ -81,86 +81,78 @@ const removeSensor = (pointIndex, sensorIndex) => {
 
 <template>
     <h1>Set-up Reef</h1>
-    <section>
-        <form @submit.prevent>
+    <form @submit.prevent>
+        <section>
             <!-- General information section of form -->
             <div class="subsection">
                 <h2>General Information</h2>
-                <label for="name">Name:</label>
-                <input
-                    v-model="form.name"
-                    name="name"
-                    type="text"
-                    required
-                />
-                <label for="datePlaced">Date of placement:</label>
-                <input
-                    v-model="form.placedOn"
-                    name="datePlaced"
-                    type="date"
-                    required
-                />
-                <label for="long">Longitude:</label>
-                <input
-                    v-model="form.longitude"
-                    name="long"
-                    type="number"
-                    step="any"
-                    required
-                />
-                <label for="lat">Latitude:</label>
-                <input
-                    v-model="form.latitude"
-                    name="lat"
-                    type="number"
-                    step="any"
-                    required
-                />
-                <label for="diagram">Upload diagram:</label>
-                <input type="file"
-                       name="diagram"
-                       @input="form.diagram = $event.target.files[0]"
-                >
+                <label for="name">Name:
+                    <input
+                        v-model="form.name"
+                        name="name"
+                        type="text"
+                        required
+                    />
+                </label>
+                <label for="datePlaced">Date of placement:
+                    <input
+                        v-model="form.placedOn"
+                        name="datePlaced"
+                        type="date"
+                        required
+                    />
+                </label>
+                <label for="diagram">Upload diagram:
+                    <input type="file"
+                           name="diagram"
+                           @input="form.diagram = $event.target.files[0]"
+                    >
+                </label>
             </div>
-            <div id="map"></div>
+            <div class="subsection">
+                <h2>Location:</h2>
+                <div id="map"></div>
+            </div>
             <!-- point & sensor section of form !-->
-            <div v-for="(point, pointIndex) in form.points" :key="pointIndex">
+            <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
-                <table v-show="point.sensors.length > 0">
-                    <tr>
-                        <th>Type:</th>
-                        <th>Unit:</th>
-                        <th></th>
-                    </tr>
-                    <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
-                        <td>
-                            <input
-                                v-model="sensor.type"
-                                type="text"
-                            />
-                        </td>
-                        <td>
-                            <input
-                                v-model="sensor.unit"
-                                type="text"
-                            />
-                        </td>
-                        <td>
-                            <button @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="sensorTableRow"><strong>Type</strong><strong>Unit</strong></div>
+                <div class="sensorTableRow" v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
+                    <input v-model="sensor.type" type="text"/>
+                    <input v-model="sensor.unit" type="text"/>
+                    <button @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
+                </div>
                 <button @click="addSensor(pointIndex)">Add sensor</button>
                 <button @click="removePoint">Delete</button>
             </div>
             <button @click="addPoint">Add Point</button>
             <button type="submit" @click="form.post('/reefs')">Submit</button>
-        </form>
-    </section>
+        </section>
+    </form>
 </template>
 
 <style scoped>
-#map {
-    height: 360px;
-}
+    #map {
+        height: 360px;
+    }
+    .subsection {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sensorTableRow {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        column-gap: 5px;
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+        }
+    }
 </style>
