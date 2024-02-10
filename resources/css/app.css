@@ -11,20 +11,44 @@
 /* TODO: Set Font family, weight and sizes.*/
 body {
     font-family: 'Fira Sans', 'Tahoma', sans-serif;
-    font-weight: normal;
-    font-variant: normal;
 }
 
-section {
+section, .subsection {
     display: flex;
     flex-direction: column;
+}
+section {
     gap: 1em;
-
-    background: var(--light-green);
     padding: 1em;
+    background: var(--light-green);
+}
+.subsection {
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5em;
+    background: var(--white);
 }
 
-.subsection {
+input {
+    border: 2px solid var(--dark-green);
+    border-radius: 5px;
+}
+input[type='file'] {
+    border: initial;
+}
+
+/*TODO: Break button out into a component*/
+button {
     background: var(--white);
-    padding: 0.5em;
+    border: 2px solid var(--dark-green);
+    border-radius: 5px;
+    padding: 0.25em;
+
+    font-size: 1.5rem;
+    color: var(--dark-green);
+    text-decoration: underline;
+
+    &:hover {
+        cursor: pointer;
+    }
 }

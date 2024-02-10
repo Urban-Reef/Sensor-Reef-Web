@@ -116,16 +116,34 @@ const removeSensor = (pointIndex, sensorIndex) => {
             <!-- point & sensor section of form !-->
             <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
-                <div class="sensorTableRow"><strong>Type</strong><strong>Unit</strong></div>
-                <div class="sensorTableRow" v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
-                    <input v-model="sensor.type" type="text"/>
-                    <input v-model="sensor.unit" type="text"/>
-                    <button @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
-                </div>
-                <button @click="addSensor(pointIndex)">Add sensor</button>
-                <button @click="removePoint">Delete</button>
+                <table v-show="point.sensors.length > 0">
+                    <tr>
+                        <th>Type:</th>
+                        <th>Unit:</th>
+                        <th></th>
+                    </tr>
+                    <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
+                        <td>
+                            <input
+                                v-model="sensor.type"
+                                type="text"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                v-model="sensor.unit"
+                                type="text"
+                            />
+                        </td>
+                        <td>
+                            <button @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
+                        </td>
+                    </tr>
+                </table>
+                <button @click.prevent="addSensor(pointIndex)">Add sensor</button>
+                <button @click.prevent="removePoint">Delete</button>
             </div>
-            <button @click="addPoint">Add Point</button>
+            <button @click.prevent="addPoint">Add Point</button>
             <button type="submit" @click="form.post('/reefs')">Submit</button>
         </section>
     </form>
@@ -135,24 +153,40 @@ const removeSensor = (pointIndex, sensorIndex) => {
     #map {
         height: 360px;
     }
-    .subsection {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
+
     label {
         display: flex;
         justify-content: space-between;
+        width: min(100%, 500px);
     }
 
-    .sensorTableRow {
-        display: grid;
-        grid-template-columns: 2fr 2fr 1fr;
-        column-gap: 5px;
+    table, th, td {
+        border: 2px solid var(--dark-green);
+    }
+    table {
+        width: min(100%, 500px);
+        border-collapse: collapse;
 
         input {
             box-sizing: border-box;
             width: 100%;
+            border: none;
+
+            font-size: 1.25em;
+            text-align: right;
+
+            &:focus {
+                outline: none;
+            }
         }
+    }
+    th {
+        background-color: var(--light-green);
+        color: var(--white);
+        text-align: left;
+    }
+
+    button {
+        align-self: start;
     }
 </style>
