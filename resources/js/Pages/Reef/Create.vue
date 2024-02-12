@@ -1,7 +1,7 @@
 <script setup>
 import {useForm} from "@inertiajs/vue3";
 import LeafletMap from "@/Components/LeafletMap.vue";
-import {computed} from "vue";
+import {computed, watch} from "vue";
 
 const form = useForm({
     name: '',
@@ -17,6 +17,7 @@ const form = useForm({
     }]
 });
 
+//computed property for displaying latitude and longitude on the map.
 const currentPosition = computed(() => {
     if (!form.latitude || !form.longitude) return null;
     return [{lat: form.latitude, lng: form.longitude}];
@@ -57,100 +58,137 @@ const removeSensor = (pointIndex, sensorIndex) => {
     form.points[pointIndex].sensors.splice(sensorIndex, 1);
 }
 
+//check for errors in the sensor fields.
+watch(() => form.errors, () => {
+    let alerted = false; //track if we already alerted the user.
+    form.points.forEach((point, pointIndex) => {
+        point.sensors.forEach((sensor, sensorIndex) => {
+            if (alerted) return;
+            //nested error objects get returned using point notation.
+            if (!form.errors[`points.${pointIndex}.sensors.${sensorIndex}.type`] || !form.errors[`points.${pointIndex}.sensors.${sensorIndex}.unit`]) return;
+            alert("Sensor type or field are not allowed to be empty!");
+        });
+    });
+})
 </script>
 
 <template>
     <h1>Set-up Reef</h1>
-    <form @submit.prevent>
+    <form @submit.prevent="form.post('/reefs')" >
         <section>
             <!-- General information section of form -->
-            <div class="subsection">
+            <div class="subsection" id="general-information">
                 <h2>General Information</h2>
-                <label for="name">Name:
+                <div class="container">
+                    <label for="name">Name:</label>
                     <input
                         v-model="form.name"
                         name="name"
                         type="text"
+                        placeholder=" Rotterdam Blue City North"
                         required
                     />
-                </label>
-                <label for="datePlaced">Date of placement:
+                    <div class="error" v-if="form.errors.name" v-text="form.errors.name"></div>
+                    <label for="datePlaced">Date of placement:</label>
                     <input
                         v-model="form.placedOn"
                         name="datePlaced"
                         type="date"
                         required
                     />
-                </label>
-                <label for="diagram">Upload diagram:
+                    <div class="error" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
+                    <label for="diagram">Upload diagram:</label>
                     <input type="file"
                            name="diagram"
                            @input="form.diagram = $event.target.files[0]"
                     >
-                </label>
+                    <div class="error" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
+                </div>
             </div>
-            <div class="subsection">
+            <div class="subsection" id="location">
                 <h2>Location:</h2>
+                <div class="error" v-if="form.errors.latitude || form.errors.longitude">Select a valid location on the map.</div>
                 <LeafletMap :markers="currentPosition"
                             @on-map-clicked="setLatitudeLongitude"/>
             </div>
             <!-- point & sensor section of form !-->
             <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <h2>Point {{pointIndex + 1}}</h2>
-                <table v-show="point.sensors.length > 0">
-                    <tr>
-                        <th>Type:</th>
-                        <th>Unit:</th>
-                        <th></th>
-                    </tr>
-                    <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
-                        <td>
-                            <input
-                                v-model="sensor.type"
-                                type="text"
-                            />
-                        </td>
-                        <td>
-                            <input
-                                v-model="sensor.unit"
-                                type="text"
-                            />
-                        </td>
-                        <td>
-                            <button @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
-                        </td>
-                    </tr>
-                </table>
-                <button @click.prevent="addSensor(pointIndex)">Add sensor</button>
-                <button @click.prevent="removePoint">Delete</button>
+                <div class="container">
+                    <table v-show="point.sensors.length > 0">
+                        <tr>
+                            <th>Type:</th>
+                            <th>Unit:</th>
+                            <th></th>
+                        </tr>
+                        <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
+                            <td>
+                                <input
+                                    v-model="sensor.type"
+                                    type="text"
+                                    placeholder="ex: humidity"
+                                />
+                            </td>
+                            <td>
+                                <input
+                                    v-model="sensor.unit"
+                                    type="text"
+                                    placeholder="ex: %"
+                                />
+                            </td>
+                            <td>
+                                <button type="button" @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
+                            </td>
+                        </tr>
+                    </table>
+                    <button type="button" @click="addSensor(pointIndex)">Add sensor</button>
+                    <button type="button" @click="removePoint">Delete</button>
+                </div>
             </div>
-            <button @click.prevent="addPoint">Add Point</button>
-            <button type="submit" @click="form.post('/reefs')">Submit</button>
+            <button type="button" @click="addPoint">Add Point</button>
+            <button type="submit" :disabled="form.processing">Submit</button>
         </section>
     </form>
 </template>
 
 <style scoped>
-    label {
+    input {
+        text-align: right;
+    }
+    .error {
+        color: red;
+    }
+    .container {
         display: flex;
-        justify-content: space-between;
-        width: min(100%, 500px);
+        flex-flow: column;
+        width: min(100%, 50ch);
+    }
+
+    #general-information {
+        .error {
+            text-align: right;
+        }
+        label {
+            margin-top: 0.5em;
+
+            &:first-child {
+                margin: 0;
+            }
+        }
     }
 
     table, th, td {
         border: 2px solid var(--dark-green);
     }
     table {
-        width: min(100%, 500px);
+        width: 100%;
         border-collapse: collapse;
 
         input {
             box-sizing: border-box;
             width: 100%;
             border: none;
-
             font-size: 1.25em;
-            text-align: right;
 
             &:focus {
                 outline: none;
@@ -164,6 +202,6 @@ const removeSensor = (pointIndex, sensorIndex) => {
     }
 
     button {
-        align-self: start;
+        align-self: flex-start;
     }
 </style>
