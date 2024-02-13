@@ -58,23 +58,28 @@ const removeSensor = (pointIndex, sensorIndex) => {
     form.points[pointIndex].sensors.splice(sensorIndex, 1);
 }
 
-//check for errors in the sensor fields.
+//used to check for errors in the sensor fields.
+const errorInSensors = (pointIndex, sensorIndex) => {
+    //nested validation is returned using dot notation.
+    //If type has an error OR unit. Return true.
+    return form.errors[`points.${pointIndex}.sensors.${sensorIndex}.type`] || form.errors[`points.${pointIndex}.sensors.${sensorIndex}.unit`];
+}
 watch(() => form.errors, () => {
-    let alerted = false; //track if we already alerted the user.
+    console.log("errors changed");
+    let alerted = false;
     form.points.forEach((point, pointIndex) => {
         point.sensors.forEach((sensor, sensorIndex) => {
-            if (alerted) return;
-            //nested error objects get returned using point notation.
-            if (!form.errors[`points.${pointIndex}.sensors.${sensorIndex}.type`] || !form.errors[`points.${pointIndex}.sensors.${sensorIndex}.unit`]) return;
-            alert("Sensor type or field are not allowed to be empty!");
+            if (!errorInSensors(pointIndex, sensorIndex)) return;
+            alert("Empty unit or type fields are not allowed. Please delete empty or incomplete rows.");
+            alerted = true;
         });
     });
 })
-</script>
+</script>)
 
 <template>
     <h1>Set-up Reef</h1>
-    <form @submit.prevent="form.post('/reefs')" >
+    <form novalidate @submit.prevent="form.post('/reefs')" >
         <section>
             <!-- General information section of form -->
             <div class="subsection" id="general-information">
@@ -88,7 +93,7 @@ watch(() => form.errors, () => {
                         placeholder=" Rotterdam Blue City North"
                         required
                     />
-                    <div class="error" v-if="form.errors.name" v-text="form.errors.name"></div>
+                    <div class="error-message" v-if="form.errors.name" v-text="form.errors.name"></div>
                     <label for="datePlaced">Date of placement:</label>
                     <input
                         v-model="form.placedOn"
@@ -96,18 +101,18 @@ watch(() => form.errors, () => {
                         type="date"
                         required
                     />
-                    <div class="error" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
+                    <div class="error-message" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
                     <label for="diagram">Upload diagram:</label>
                     <input type="file"
                            name="diagram"
                            @input="form.diagram = $event.target.files[0]"
                     >
-                    <div class="error" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
+                    <div class="error-message" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
                 </div>
             </div>
             <div class="subsection" id="location">
                 <h2>Location:</h2>
-                <div class="error" v-if="form.errors.latitude || form.errors.longitude">Select a valid location on the map.</div>
+                <div class="error-message" v-if="form.errors.latitude || form.errors.longitude">Select a valid location on the map.</div>
                 <LeafletMap :markers="currentPosition"
                             @on-map-clicked="setLatitudeLongitude"/>
             </div>
@@ -122,14 +127,14 @@ watch(() => form.errors, () => {
                             <th></th>
                         </tr>
                         <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
-                            <td>
+                            <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error-message' : ''">
                                 <input
                                     v-model="sensor.type"
                                     type="text"
                                     placeholder="ex: humidity"
                                 />
                             </td>
-                            <td>
+                            <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error-message' : ''">
                                 <input
                                     v-model="sensor.unit"
                                     type="text"
@@ -155,7 +160,7 @@ watch(() => form.errors, () => {
     input {
         text-align: right;
     }
-    .error {
+    .error-message {
         color: red;
     }
     .container {
@@ -165,7 +170,7 @@ watch(() => form.errors, () => {
     }
 
     #general-information {
-        .error {
+        .error-message {
             text-align: right;
         }
         label {
@@ -189,10 +194,16 @@ watch(() => form.errors, () => {
             width: 100%;
             border: none;
             font-size: 1.25em;
+            background: inherit;
 
             &:focus {
                 outline: none;
             }
+        }
+
+        .error-message {
+            background-color: #ff9595;
+            color: var(--black);
         }
     }
     th {
