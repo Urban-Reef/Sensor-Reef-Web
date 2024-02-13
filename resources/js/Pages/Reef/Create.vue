@@ -65,11 +65,12 @@ const errorInSensors = (pointIndex, sensorIndex) => {
     return form.errors[`points.${pointIndex}.sensors.${sensorIndex}.type`] || form.errors[`points.${pointIndex}.sensors.${sensorIndex}.unit`];
 }
 watch(() => form.errors, () => {
-    console.log("errors changed");
-    let alerted = false;
+    let alerted = false; // track if already alerted.
     form.points.forEach((point, pointIndex) => {
         point.sensors.forEach((sensor, sensorIndex) => {
-            if (!errorInSensors(pointIndex, sensorIndex)) return;
+            //if no error or already alerted. Return out of the function.
+            if (!errorInSensors(pointIndex, sensorIndex) || !alerted) return;
+            //else send an alert.
             alert("Empty unit or type fields are not allowed. Please delete empty or incomplete rows.");
             alerted = true;
         });
