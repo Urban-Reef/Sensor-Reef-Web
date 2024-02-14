@@ -2,6 +2,8 @@
 import {useForm} from "@inertiajs/vue3";
 import LeafletMap from "@/Components/LeafletMap.vue";
 import {computed, watch} from "vue";
+import ImageInput from "@/Components/ImageInput.vue";
+import Button from "@/Components/Button.vue";
 
 const form = useForm({
     name: '',
@@ -40,7 +42,6 @@ const addPoint = () => {
             unit: '',
         }]
     };
-
     form.points.push(newPoint);
 }
 const removePoint = (index) => {
@@ -79,7 +80,7 @@ watch(() => form.errors, () => {
 </script>)
 
 <template>
-    <form novalidate @submit.prevent="form.post('/reefs')" >
+    <form @submit.prevent="form.post('/reefs')" >
         <section>
             <!-- General information section of form -->
             <div class="subsection" id="general-information">
@@ -101,11 +102,7 @@ watch(() => form.errors, () => {
                     required
                 />
                 <div class="error" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
-                <label for="diagram">Upload diagram:</label>
-                <input type="file"
-                       name="diagram"
-                       @input="form.diagram = $event.target.files[0]"
-                >
+                <ImageInput v-model="form.diagram" name="Diagram"/>
                 <div class="error" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
             </div>
             <div class="subsection" id="location">
@@ -118,7 +115,7 @@ watch(() => form.errors, () => {
             <div class="subsection point" v-for="(point, pointIndex) in form.points" :key="pointIndex">
                 <div class="header">
                     <h2>Point {{pointIndex + 1}}</h2>
-                    <button class="button--dark" type="button" @click="removePoint">Delete</button>
+                    <Button theme="dark" type="button" @click="removePoint">Delete</Button>
                 </div>
                 <table v-show="point.sensors.length > 0">
                     <tr>
@@ -142,14 +139,14 @@ watch(() => form.errors, () => {
                             />
                         </td>
                         <td>
-                            <button class="button--dark" type="button" @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
+                            <Button theme="dark" type="button" @click="removeSensor(pointIndex, sensorIndex)">Delete</Button>
                         </td>
                     </tr>
                 </table>
-                <button class="button--dark" type="button" @click="addSensor(pointIndex)">Add sensor</button>
+                <Button theme="dark" type="button" @click="addSensor(pointIndex)">Add sensor</Button>
             </div>
-            <button class="button--light" type="button" @click="addPoint">Add Point</button>
-            <button class="button--light" id="submit" type="submit" :disabled="form.processing">Submit</button>
+            <Button theme="light" type="button" @click="addPoint">Add Point</Button>
+            <Button theme="light" id="submit" type="submit" :disabled="form.processing">Submit</Button>
         </section>
     </form>
 </template>
