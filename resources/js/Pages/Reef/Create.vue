@@ -79,80 +79,77 @@ watch(() => form.errors, () => {
 </script>)
 
 <template>
-    <h1>Set-up Reef</h1>
     <form novalidate @submit.prevent="form.post('/reefs')" >
         <section>
             <!-- General information section of form -->
             <div class="subsection" id="general-information">
                 <h2>General Information</h2>
-                <div class="container">
-                    <label for="name">Name:</label>
-                    <input
-                        v-model="form.name"
-                        name="name"
-                        type="text"
-                        placeholder=" Rotterdam Blue City North"
-                        required
-                    />
-                    <div class="error-message" v-if="form.errors.name" v-text="form.errors.name"></div>
-                    <label for="datePlaced">Date of placement:</label>
-                    <input
-                        v-model="form.placedOn"
-                        name="datePlaced"
-                        type="date"
-                        required
-                    />
-                    <div class="error-message" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
-                    <label for="diagram">Upload diagram:</label>
-                    <input type="file"
-                           name="diagram"
-                           @input="form.diagram = $event.target.files[0]"
-                    >
-                    <div class="error-message" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
-                </div>
+                <label for="name">Name:</label>
+                <input
+                    v-model="form.name"
+                    name="name"
+                    type="text"
+                    placeholder=" Rotterdam Blue City North"
+                    required
+                />
+                <div class="error" v-if="form.errors.name" v-text="form.errors.name"></div>
+                <label for="datePlaced">Date of placement:</label>
+                <input
+                    v-model="form.placedOn"
+                    name="datePlaced"
+                    type="date"
+                    required
+                />
+                <div class="error" v-if="form.errors.placedOn" v-text="form.errors.placedOn"></div>
+                <label for="diagram">Upload diagram:</label>
+                <input type="file"
+                       name="diagram"
+                       @input="form.diagram = $event.target.files[0]"
+                >
+                <div class="error" v-if="form.errors.diagram" v-text="form.errors.diagram"></div>
             </div>
             <div class="subsection" id="location">
                 <h2>Location:</h2>
-                <div class="error-message" v-if="form.errors.latitude || form.errors.longitude">Select a valid location on the map.</div>
+                <div class="error" v-if="form.errors.latitude || form.errors.longitude">Select a valid location on the map.</div>
                 <LeafletMap :markers="currentPosition"
                             @on-map-clicked="setLatitudeLongitude"/>
             </div>
             <!-- point & sensor section of form !-->
-            <div class="subsection" v-for="(point, pointIndex) in form.points" :key="pointIndex">
-                <h2>Point {{pointIndex + 1}}</h2>
-                <div class="container">
-                    <table v-show="point.sensors.length > 0">
-                        <tr>
-                            <th>Type:</th>
-                            <th>Unit:</th>
-                            <th></th>
-                        </tr>
-                        <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
-                            <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error-message' : ''">
-                                <input
-                                    v-model="sensor.type"
-                                    type="text"
-                                    placeholder="ex: humidity"
-                                />
-                            </td>
-                            <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error-message' : ''">
-                                <input
-                                    v-model="sensor.unit"
-                                    type="text"
-                                    placeholder="ex: %"
-                                />
-                            </td>
-                            <td>
-                                <button type="button" @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
-                            </td>
-                        </tr>
-                    </table>
-                    <button type="button" @click="addSensor(pointIndex)">Add sensor</button>
-                    <button type="button" @click="removePoint">Delete</button>
+            <div class="subsection point" v-for="(point, pointIndex) in form.points" :key="pointIndex">
+                <div class="header">
+                    <h2>Point {{pointIndex + 1}}</h2>
+                    <button class="button--dark" type="button" @click="removePoint">Delete</button>
                 </div>
+                <table v-show="point.sensors.length > 0">
+                    <tr>
+                        <th>Type:</th>
+                        <th>Unit:</th>
+                        <th></th>
+                    </tr>
+                    <tr v-for="(sensor, sensorIndex) in point.sensors" :key="`${pointIndex}.${sensorIndex}`">
+                        <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error' : ''">
+                            <input
+                                v-model="sensor.type"
+                                type="text"
+                                placeholder="ex: humidity"
+                            />
+                        </td>
+                        <td :class="errorInSensors(pointIndex, sensorIndex) ? 'error' : ''">
+                            <input
+                                v-model="sensor.unit"
+                                type="text"
+                                placeholder="ex: %"
+                            />
+                        </td>
+                        <td>
+                            <button class="button--dark" type="button" @click="removeSensor(pointIndex, sensorIndex)">Delete</button>
+                        </td>
+                    </tr>
+                </table>
+                <button class="button--dark" type="button" @click="addSensor(pointIndex)">Add sensor</button>
             </div>
-            <button type="button" @click="addPoint">Add Point</button>
-            <button type="submit" :disabled="form.processing">Submit</button>
+            <button class="button--light" type="button" @click="addPoint">Add Point</button>
+            <button class="button--light" id="submit" type="submit" :disabled="form.processing">Submit</button>
         </section>
     </form>
 </template>
@@ -161,34 +158,39 @@ watch(() => form.errors, () => {
     input {
         text-align: right;
     }
-    .error-message {
+    .error {
         color: red;
-    }
-    .container {
-        display: flex;
-        flex-flow: column;
-        width: min(100%, 50ch);
     }
 
     #general-information {
-        .error-message {
+        .error {
             text-align: right;
         }
         label {
-            margin-top: 0.5em;
+            margin-top: var(--subsection-padding);
 
             &:first-child {
                 margin: 0;
             }
+        }
+        input {
+            width: min(98%, 50ch);
+            align-self: flex-end;
         }
     }
 
     table, th, td {
         border: 2px solid var(--dark-green);
     }
+    th {
+        background-color: var(--light-green);
+        color: var(--white);
+        text-align: left;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
+        margin-bottom: 1rem;
 
         input {
             box-sizing: border-box;
@@ -202,18 +204,21 @@ watch(() => form.errors, () => {
             }
         }
 
-        .error-message {
+        .error {
             background-color: #ff9595;
             color: var(--black);
         }
     }
-    th {
-        background-color: var(--light-green);
-        color: var(--white);
-        text-align: left;
+
+    #submit {
+        align-self: flex-end;
     }
 
-    button {
-        align-self: flex-start;
+    .point {
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     }
 </style>

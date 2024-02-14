@@ -11,21 +11,34 @@
 /* TODO: Set Font family, weight and sizes.*/
 body {
     font-family: 'Fira Sans', 'Tahoma', sans-serif;
+    background: ghostwhite;
 }
 
 section, .subsection {
     display: flex;
-    flex-direction: column;
+    flex-flow: column;
 }
 section {
-    gap: 1em;
-    padding: 1em;
+    --section-padding: 1.5rem;
+    --section-margin: 1rem;
+
+    width: min(
+        /* Small screens: 100% - padding and with for both sides */
+        100% - (var(--section-padding) + var(--section-margin)) * 2,
+        /* Large screens: 75ch + padding for both sides*/
+        75ch + var(--section-padding) * 2
+    );
+    /*auto to center*/
+    margin: var(--section-margin) auto;
+    padding: var(--section-padding);
+    gap: var(--section-padding);
+
     background: var(--light-green);
 }
 .subsection {
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.5em;
+    --subsection-padding: 1rem;
+
+    padding: var(--subsection-padding);
     background: var(--white);
 }
 
@@ -39,16 +52,41 @@ input[type='file'] {
 
 /*TODO: Break button out into a component*/
 button {
-    background: var(--white);
-    border: 2px solid var(--dark-green);
-    border-radius: 5px;
-    padding: 0.25em;
-
+    padding: 1ch;
+    border: 4px solid;
+    border-radius: 10px;
+    outline: 3px solid;
+    outline-offset: -8px;
     font-size: 1.5rem;
-    color: var(--dark-green);
     text-decoration: underline;
 
     &:hover {
         cursor: pointer;
+    }
+}
+.button--light {
+    color: var(--dark-green);
+    border-color: var(--white);
+    outline-color: var(--dark-green);
+    background: var(--white);
+
+    &:hover {
+        color: var(--white);
+        border-color: var(--dark-green);
+        outline-color: var(--white);
+        background: var(--dark-green);
+    }
+}
+.button--dark {
+    color: var(--white);
+    border-color: var(--dark-green);
+    outline-color: var(--white);
+    background: var(--dark-green);
+
+    &:hover {
+        color: var(--white);
+        border-color: var(--light-green);
+        outline-color: var(--white);
+        background: var(--light-green);
     }
 }
