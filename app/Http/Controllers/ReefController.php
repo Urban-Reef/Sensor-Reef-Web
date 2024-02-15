@@ -43,14 +43,14 @@ class ReefController extends Controller
         ]);
         $this->storeDiagram($request, $reef);
 
-        //Loop through all the points.
+        //Loop through all the points send with the request.
         foreach ($request->points as $pointIndex => $point) {
             $newPoint = Point::create([
                'reef_id' => $reef->id,
                'position' => $pointIndex + 1 //Use the index to define position.
             ]);
 
-            //Loop through all the sensors.
+            //Loop through all the sensors send with the request.
             foreach ($point['sensors'] as $sensor){
                 Sensor::create([
                     'point_id' => $newPoint->id,
@@ -59,7 +59,7 @@ class ReefController extends Controller
                 ]);
             }
         }
-//        TODO: Return or alert
+        return redirect()->route('reefs.show', [$reef->id]);
     }
     protected function storeDiagram($request, $reef): void
     {
@@ -75,7 +75,7 @@ class ReefController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Reef::with('points.sensors')->find($id);
     }
 
     /**
