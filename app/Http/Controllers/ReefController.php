@@ -61,6 +61,7 @@ class ReefController extends Controller
         }
         return redirect()->route('reefs.show', [$reef->id]);
     }
+    //TODO: Optimise images, store in disk & authorization and authentication.
     protected function storeDiagram($request, $reef): void
     {
         //if file is not present return out of the function.

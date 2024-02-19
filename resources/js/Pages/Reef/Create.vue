@@ -68,11 +68,12 @@ const errorInSensors = (pointIndex, sensorIndex) => {
 watch(() => form.errors, () => {
     let alerted = false; // track if already alerted.
     form.points.forEach((point, pointIndex) => {
+        if (alerted) return; // if already alerted stop.
         point.sensors.forEach((sensor, sensorIndex) => {
-            //if no error or already alerted. Return out of the function.
-            if (!errorInSensors(pointIndex, sensorIndex) || !alerted) return;
+            //if no error return out of the function.
+            if (!errorInSensors(pointIndex, sensorIndex)) return;
             //else send an alert.
-            alert("Empty unit or type fields are not allowed. Please delete empty or incomplete rows.");
+            alert("Sensor type or Sensor unit are not allowed to be empty. Please delete empty or incomplete rows.");
             alerted = true;
         });
     });
