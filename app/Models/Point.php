@@ -24,4 +24,16 @@ class Point extends Model
     {
         return $this->hasMany(Sensor::class);
     }
+    public function samples(): HasMany
+    {
+        return $this->hasMany(Sample::class);
+    }
+    public function pointPhotos(): HasMany
+    {
+        return $this->hasMany(PointPhotos::class);
+    }
+    public function biodiversityEntries(): HasMany
+    {
+        return $this->hasMany(BiodiversityEntry::class);
+    }
 }
