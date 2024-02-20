@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReefController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,7 @@ Route::get('/dashboard', function () {
 
 //Resource Route for Reefs, automatically creates all CRUD routes.
 Route::resource('reefs', ReefController::class);
+Route::resource('session', SessionController::class);
 
 Route::middleware('auth')->group(function () {
     //Profile routes created during scaffolding
