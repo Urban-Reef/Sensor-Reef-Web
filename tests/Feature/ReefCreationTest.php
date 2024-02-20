@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Point;
+use App\Models\Reef;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -17,6 +19,12 @@ class ReefCreationTest extends TestCase
     public function test_storing_reef_with_points_sensors()
     {
         Storage::fake('public');
+        //Used to check id of the to be created reef
+        $latestReef = Reef::orderBy('id', 'desc')->select('id')->first();
+        $correctReefId = $latestReef ? $latestReef['id'] + 1 : 1;
+        $latestPoint = Point::select('id')->latest()->first();
+        $lastCreatedPointId = $latestPoint ? $latestPoint['id'] : 0;
+
         $data = [
             'name' => 'Feature Test',
             'longitude' => 123.123456,
@@ -33,12 +41,11 @@ class ReefCreationTest extends TestCase
                 ]]
             ]
         ];
-
         $response = $this->post('/reefs', $data);
-
-        $response->assertStatus(302); // Assuming successful redirect
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('reefs', [
+            'id' => $correctReefId,
             'name' => $data['name'],
             'longitude' => $data['longitude'],
             'latitude' => $data['latitude'],
@@ -50,27 +57,27 @@ class ReefCreationTest extends TestCase
 
         //assert points
         $this->assertDatabaseHas('points', [
-            'reef_id' => 1,
+            'reef_id' => $correctReefId,
             'position' => 1
         ]);
         $this->assertDatabaseHas('points', [
-            'reef_id' => 1,
+            'reef_id' => $correctReefId,
             'position' => 2
         ]);
 
         //assert sensors
         $this->assertDatabaseHas('sensors', [
-            'point_id' => 1,
+            'point_id' => $lastCreatedPointId + 1,
             'type' => $data['points'][0]['sensors'][0]['type'],
             'unit' => $data['points'][0]['sensors'][0]['unit']
         ]);
         $this->assertDatabaseHas('sensors', [
-            'point_id' => 1,
+            'point_id' => $lastCreatedPointId + 1,
             'type' => $data['points'][0]['sensors'][1]['type'],
             'unit' => $data['points'][0]['sensors'][1]['unit']
         ]);
         $this->assertDatabaseHas('sensors', [
-            'point_id' => 2,
+            'point_id' => $lastCreatedPointId + 2,
             'type' => $data['points'][1]['sensors'][0]['type'],
             'unit' => $data['points'][1]['sensors'][0]['unit']
         ]);
