@@ -20,6 +20,6 @@ class PointPhotos extends Model
 
     protected function session(): BelongsTo
     {
-        return $this->belongsTo(Session::class);
+        return $this->belongsTo(MonitoringSession::class);
     }
 }

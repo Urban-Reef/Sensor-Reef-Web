@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unique(['sensor_id', 'measured_at']);
 
             $table->double('value');
-
         });
     }
 

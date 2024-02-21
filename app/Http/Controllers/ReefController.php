@@ -43,6 +43,11 @@ class ReefController extends Controller
         ]);
         $this->storeDiagram($request, $reef);
 
+        //Create a point with position 0 for environmental monitoring.
+        Point::create([
+            'reef_id' => $reef->id,
+            'position' => 0
+        ]);
         //Loop through all the points send with the request.
         foreach ($request->points as $pointIndex => $point) {
             $newPoint = Point::create([

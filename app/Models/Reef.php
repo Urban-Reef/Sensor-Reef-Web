@@ -32,6 +32,6 @@ class Reef extends Model
     }
     public function sessions(): HasMany
     {
-        return $this->hasMany(Session::class);
+        return $this->hasMany(MonitoringSession::class);
     }
 }

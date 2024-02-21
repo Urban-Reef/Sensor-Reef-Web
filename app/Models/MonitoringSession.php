@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Session extends Model
+class MonitoringSession extends Model
 {
+    protected $table = 'sessions';
     public function reef(): BelongsTo
     {
         return $this->belongsTo(Reef::class);
@@ -24,9 +25,5 @@ class Session extends Model
     public function biodiversityEntries(): HasMany
     {
         return $this->hasMany(BiodiversityEntry::class);
-    }
-    public function reefPhotos(): HasMany
-    {
-        return $this->hasMany(ReefPhoto::class);
     }
 }

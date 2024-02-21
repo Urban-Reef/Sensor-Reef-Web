@@ -3,20 +3,19 @@
 namespace Database\Factories;
 
 use App\Models\Point;
-use App\Models\Sensor;
+use App\Models\Reef;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class SensorFactory extends Factory
+class PointFactory extends Factory
 {
-    protected $model = Sensor::class;
+    protected $model = Point::class;
 
     public function definition(): array
     {
         return [
-            'point_id' => Point::factory(),
-            'type' => $this->faker->word(),
-            'unit' => $this->faker->randomLetter(),
+            'reef_id' => Reef::factory(),
+            'position' => $this->faker->randomNumber(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

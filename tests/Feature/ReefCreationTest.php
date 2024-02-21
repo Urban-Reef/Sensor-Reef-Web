@@ -58,6 +58,10 @@ class ReefCreationTest extends TestCase
         //assert points
         $this->assertDatabaseHas('points', [
             'reef_id' => $correctReefId,
+            'position' => 0
+        ]);
+        $this->assertDatabaseHas('points', [
+            'reef_id' => $correctReefId,
             'position' => 1
         ]);
         $this->assertDatabaseHas('points', [
