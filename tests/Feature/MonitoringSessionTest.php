@@ -20,94 +20,125 @@ class MonitoringSessionTest extends TestCase
     public function testStoringSession()
     {
         Storage::fake('public');
-        //create models in database for testing
-        $fakeReef = Reef::factory()->has(
-            Point::factory()->has(
-                Sensor::factory()
+        /* Create models in database for testing
+         * Create a Reef with 2 points.
+         * 1 point with position 0 for environmental monitoring.
+         * 1 point with a random position for point monitoring.
+         */
+        $fakeReef = Reef::factory()
+            ->has(Point::factory(['position' => 1])
+                ->has(Sensor::factory())
             )
-        )->create();
-        $latestSession = MonitoringSession::latest()->first();
-        $correctSessionId = $latestSession ? $latestSession->id + 1 : 1;
-        $latestSample = Sample::latest()->first();
-        $correctSampleId = $latestSample ? $latestSample->id : 1;
+            ->has(Point::factory(['position' => 0]))
+            ->create();
+        //sort the points array based on position so position reflects the index.
+        $fakeReef->points->sortBy('position')->values();
 
+        //Get the id of the latest monitoring session and add 1.
+        //If none exist set to 1.
+        $correctSessionId = (MonitoringSession::latest()->first()?->id ?? 0) + 1;
+        //Do the same for sample.
+        $correctSampleId = (Sample::latest()->first()?->id ?? 0) + 1;
 
         //data object has been broken up for the sake of readability.
-        $environmentEntries = [
-            [
-                'photo' => UploadedFile::fake()->image('entry1.jpg'),
-                'count' => 1,
-                'species' => 'ant'
+        //Environment = point 0.
+        $point0 = [
+            'photos' => [
+                UploadedFile::fake()->image('left.jpg'),
+                UploadedFile::fake()->image('front.jpg'),
+                UploadedFile::fake()->image('right.jpg'),
             ],
-            [
-                'photo' => UploadedFile::fake()->image('entry2.jpg'),
-                'count' => 2,
-                'species' => 'lichen'
+            'entries' => [
+                [
+                    'photo' => UploadedFile::fake()->image('entry1.jpg'),
+                    'count' => 1,
+                    'species' => 'ant'
+                ],
+                [
+                    'photo' => UploadedFile::fake()->image('entry2.jpg'),
+                    'count' => 2,
+                    'species' => 'lichen'
+                ]
             ]
         ];
-        $pointEntries = [
-            [
-                'photo' => UploadedFile::fake()->image('entry3.jpg'),
-                'count' => 3,
-                'species' => 'spider'
-            ],
-            [
-                'photo' => UploadedFile::fake()->image('entry4.jpg'),
-                'count' => 4,
-                'species' => 'woodlouse'
-            ],
-        ];
-        $point = [
-            'photo' => UploadedFile::fake()->image('closeUpPhoto.jpg'),
+        $point1 = [
+            'photos' => [UploadedFile::fake()->image('closeUpPhoto.jpg')],
             'sample' => true,
             'sensors' => [
                 [
-                    'id' => $fakeReef->points[0]['sensors'][0]->id,
+                    'id' => $fakeReef->points[1]['sensors'][0]->id,
                     'value' => 10,
                     'measuredAt' => Carbon::now()
                 ]
             ],
-            'entries' => $pointEntries
+            'entries' => [
+                [
+                    'photo' => UploadedFile::fake()->image('entry3.jpg'),
+                    'count' => 3,
+                    'species' => 'spider'
+                ],
+                [
+                    'photo' => UploadedFile::fake()->image('entry4.jpg'),
+                    'count' => 4,
+                    'species' => 'woodlouse'
+                ],
+            ]
         ];
         $data = [
             'reefId' => $fakeReef->id,
-            'environment' => [
-                'left' => UploadedFile::fake()->image('left.jpg'),
-                'front' => UploadedFile::fake()->image('front.jpg'),
-                'right' => UploadedFile::fake()->image('right.jpg'),
-                'entries' => $environmentEntries
-            ],
-            'points' => [$point] //track points though array index. Sort array on 'position'.
+            'points' => [$point0, $point1] //Index corresponds with point position.
         ];
 
         $response = $this->post('/session', $data);
 
-        $response->assertStatus(302);
+        $response->assertStatus(200);
 
         $this->assertDatabaseHas('sessions', [
             'id' => $correctSessionId,
-            'photo_right' => $data['environment']['right']->hashName(),
-            'photo_front' => $data['environment']['front']->hashName(),
-            'photo_left' => $data['environment']['left']->hashName()
         ]);
+        //Environment assertions (point 0)
+        foreach ($point0['photos'] as $photo) {
+            $this->assertDatabaseHas('point_photos', [
+                'point_id' => $fakeReef->points[0]->id,
+                'session_id' => $correctSessionId,
+                'url' => $photo->hashName()
+            ]);
+        }
+        foreach ($point0['entries'] as $entry) {
+            $this->assertDatabaseHas('biodiversity_entries', [
+                'session_id' => $correctSessionId,
+                'point_id' => $fakeReef->points[0]->id,
+                'photo' => $entry['photo']->hashName(),
+                'species' => $entry['species'],
+                'count' => $entry['count']
+            ]);
+        }
 
+        //Point assertions (point 1)
         $this->assertDatabaseHas('point_photos', [
-            'point_id' => $fakeReef->points[0]->id,
+            'point_id' => $fakeReef->points[1]->id,
             'session_id' => $correctSessionId,
-            'url' => $point['photo']->hashName()
+            'url' => $point1['photos'][0]->hashName()
         ]);
         $this->assertDatabaseHas('samples', [
             'id' => $correctSampleId,
             'session_id' => $correctSessionId,
-            'point_id' => $fakeReef->points[0]->id,
+            'point_id' => $fakeReef->points[1]->id,
         ]);
         $this->assertDatabaseHas('sensor_data', [
-            'sensor_id' => $fakeReef->points[0]->sensors[0]->id,
-            'value' => $point['sensors'][0]['value'],
-            'measured_at' => $point['sensors'][0]['measuredAt']
+            'sensor_id' => $fakeReef->points[1]->sensors[0]->id,
+            'value' => $point1['sensors'][0]['value'],
+            'measured_at' => $point1['sensors'][0]['measuredAt']
         ]);
-
-        //TODO: Assert biodiversityEntries
+        foreach ($point1['entries'] as $entry) {
+            $this->assertDatabaseHas('biodiversity_entries', [
+                'session_id' => $correctSessionId,
+                'point_id' => $fakeReef->points[0]->id,
+                'photo' => $entry['photo']->hashName(),
+                'species' => $entry['species'],
+                'count' => $entry['count']
+            ]);
+        }
 
     }
 }
