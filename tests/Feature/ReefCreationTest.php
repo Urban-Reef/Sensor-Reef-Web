@@ -57,31 +57,34 @@ class ReefCreationTest extends TestCase
 
         //assert points
         $this->assertDatabaseHas('points', [
+            'id' => $lastCreatedPointId + 1,
             'reef_id' => $correctReefId,
             'position' => 0
         ]);
         $this->assertDatabaseHas('points', [
+            'id' => $lastCreatedPointId + 2,
             'reef_id' => $correctReefId,
             'position' => 1
         ]);
         $this->assertDatabaseHas('points', [
+            'id' => $lastCreatedPointId + 3,
             'reef_id' => $correctReefId,
             'position' => 2
         ]);
 
         //assert sensors
         $this->assertDatabaseHas('sensors', [
-            'point_id' => $lastCreatedPointId + 1,
+            'point_id' => $lastCreatedPointId + 2,
             'type' => $data['points'][0]['sensors'][0]['type'],
             'unit' => $data['points'][0]['sensors'][0]['unit']
         ]);
         $this->assertDatabaseHas('sensors', [
-            'point_id' => $lastCreatedPointId + 1,
+            'point_id' => $lastCreatedPointId + 2,
             'type' => $data['points'][0]['sensors'][1]['type'],
             'unit' => $data['points'][0]['sensors'][1]['unit']
         ]);
         $this->assertDatabaseHas('sensors', [
-            'point_id' => $lastCreatedPointId + 2,
+            'point_id' => $lastCreatedPointId + 3,
             'type' => $data['points'][1]['sensors'][0]['type'],
             'unit' => $data['points'][1]['sensors'][0]['unit']
         ]);
