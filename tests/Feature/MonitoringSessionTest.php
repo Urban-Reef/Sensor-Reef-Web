@@ -93,10 +93,13 @@ class MonitoringSessionTest extends TestCase
 
         $response->assertStatus(200);
 
+        //Session created?
         $this->assertDatabaseHas('sessions', [
             'id' => $correctSessionId,
         ]);
+
         //Environment assertions (point 0)
+        //assert photos are stored.
         foreach ($point0['photos'] as $photo) {
             $this->assertDatabaseHas('point_photos', [
                 'point_id' => $fakeReef->points[0]->id,
@@ -104,6 +107,7 @@ class MonitoringSessionTest extends TestCase
                 'url' => $photo->hashName()
             ]);
         }
+        //assert biodiversity entries have been stored.
         foreach ($point0['entries'] as $entry) {
             $this->assertDatabaseHas('biodiversity_entries', [
                 'session_id' => $correctSessionId,
