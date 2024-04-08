@@ -44,6 +44,7 @@ class ReefCreationTest extends TestCase
         $response = $this->post('/reefs', $data);
         $response->assertStatus(302);
 
+        //assert reef has been created.
         $this->assertDatabaseHas('reefs', [
             'id' => $correctReefId,
             'name' => $data['name'],
@@ -52,7 +53,7 @@ class ReefCreationTest extends TestCase
             'placed_on' => $data['placedOn'],
             'diagram' => $data['diagram']->hashName()
         ]);
-        // Add assertions for diagram storage
+        //Assert diagram is stored in filesystem.
         Storage::disk('public')->assertExists($data['diagram']->hashName());
 
         //assert points
