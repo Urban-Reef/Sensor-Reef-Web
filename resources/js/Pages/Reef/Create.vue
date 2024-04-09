@@ -78,7 +78,7 @@ watch(() => form.errors, () => {
         });
     });
 })
-</script>)
+</script>
 
 <template>
     <form @submit.prevent="form.post('/reefs')" >

@@ -7,8 +7,8 @@ use App\Models\Point;
 use App\Models\Reef;
 use App\Models\Sensor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ReefController extends Controller
 {
@@ -24,7 +24,7 @@ class ReefController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Inertia\Response
+    public function create(): Response
     {
         return Inertia::render('Reef/Create');
     }
