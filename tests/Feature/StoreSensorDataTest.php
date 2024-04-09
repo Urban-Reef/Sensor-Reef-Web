@@ -50,7 +50,7 @@ class StoreSensorDataTest extends TestCase
         }
     }
 
-    public function testValidationError()
+    public function testOnValidationError()
     {
         $data = [
             'uplink_message' => [
