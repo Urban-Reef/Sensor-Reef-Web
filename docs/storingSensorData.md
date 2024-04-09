@@ -5,19 +5,32 @@ Explanation of how sensor data is processed when received from TTN.
 - [ ] Return error message when `pointId` or `sensorId` cannot be found.
 ## General information
 ### Route
-POST `/api/storeSensorData`
-### Model
-SensorData
+POST: `/api/storeSensorData`
+### Models
+#### Sensor
+Belongs to a **Point**. Has many **SensorData**.
+
+`type` type of sensor i.e. humidity or temperature.
+
+`unit` unit of measurement i.e. °C or %
+
+#### SensorData
+Belongs to **Sensor**.
+
+`value` value measured by sensor stored as a numeric value.
+
+`measured_at` standard value is `CURRENT_TIMESTAMP`
+
 ### Controller
 SensorDataController
 ### Validation
 PostSensorDataRequest
 ### Feature Test
 StoreSensorDataTest
-- succesfull store test
+- successful store test
 - validation fail test
 ## How it works
-When TTN recieves sensor data it will decode the package to JSON and perform a POST request. Below an example of the contents of this request:
+When TTN receives sensor data it will [decode](https://github.com/Urban-Reef/Sensor-Reef-URDecoder) the package to JSON and perform a POST request. Below an example of the contents of this request:
 ```json
 {
     "uplink_message": {
@@ -50,7 +63,7 @@ The other attribute names should be equal to the `type` of sensors. The names of
 $keys = array_diff(array_keys($point), ['position']);
 //example: $keys = ['humidity', 'temperature']
 ```
-Whe can then loop through this array and retrieve the id of specific sensors:
+We can then loop through this array and retrieve the id of specific sensors:
 ```php
 //Loop through keys array
 foreach ($keys as $key){

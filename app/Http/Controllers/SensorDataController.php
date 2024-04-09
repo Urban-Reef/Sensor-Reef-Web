@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostSensorDataRequest;
 use App\Models\Point;
-use App\Models\Reef;
 use App\Models\Sensor;
 use App\Models\SensorData;
-use Illuminate\Http\Request;
 
 class SensorDataController extends Controller
 {
