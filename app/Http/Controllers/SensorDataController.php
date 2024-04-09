@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostSensorDataRequest;
 use App\Models\Point;
 use App\Models\Reef;
 use App\Models\Sensor;
@@ -10,10 +11,11 @@ use Illuminate\Http\Request;
 
 class SensorDataController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(PostSensorDataRequest $request)
     {
-        $data = $request->uplink_message['decoded_payload'];
+        //TODO: Return error message when point or sensor isn't found.
 
+        $data = $request->uplink_message['decoded_payload'];
         //loop through all points
         foreach ($data['points'] as $point){
             //get point id.

@@ -15,7 +15,7 @@ class PointFactory extends Factory
     {
         return [
             'reef_id' => Reef::factory(),
-            'position' => $this->faker->randomNumber(),
+            'position' => $this->faker->unique()->numberBetween(0,10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

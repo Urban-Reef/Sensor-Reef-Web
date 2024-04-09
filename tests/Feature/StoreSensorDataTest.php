@@ -49,4 +49,28 @@ class StoreSensorDataTest extends TestCase
             }
         }
     }
+
+    public function testValidationError()
+    {
+        $data = [
+            'uplink_message' => [
+                'decoded_payload' => [
+                    'points' => [
+                        [
+                            'position' => 'not an integer',
+                            'temperature' => 'not an number',
+                            'humidity' => 'not an integer'
+                        ]
+                    ],
+                    'reefId' => 999 //does not exist in database.
+                ]]];
+        $response = $this->postJson('/api/storeSensorData', $data);
+        $response->assertStatus(422);
+        $response->assertInvalid([
+            'uplink_message.decoded_payload.points.0.humidity',
+            'uplink_message.decoded_payload.points.0.position',
+            'uplink_message.decoded_payload.points.0.temperature',
+            'uplink_message.decoded_payload.reefId',
+        ]);
+    }
 }
