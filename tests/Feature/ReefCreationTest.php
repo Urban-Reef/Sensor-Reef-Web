@@ -20,10 +20,8 @@ class ReefCreationTest extends TestCase
     {
         Storage::fake('public');
         //Used to check id of the to be created reef
-        $latestReef = Reef::orderBy('id', 'desc')->select('id')->first();
-        $correctReefId = $latestReef ? $latestReef['id'] + 1 : 1;
-        $latestPoint = Point::select('id')->latest()->first();
-        $lastCreatedPointId = $latestPoint ? $latestPoint['id'] : 0;
+        $correctReefId = optional(Reef::latest('id'))->first()->id ?? 1;
+        $lastCreatedPointId = optional(Point::latest('id'))->first()->id ?? 0;
 
         $data = [
             'name' => 'Feature Test',
