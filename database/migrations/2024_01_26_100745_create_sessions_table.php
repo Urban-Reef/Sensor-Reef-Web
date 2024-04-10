@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('reef_id')->constrained();
-            $table->string('photo_left');
-            $table->string('photo_front');
-            $table->string('photo_right');
             $table->timestamps();
         });
     }
