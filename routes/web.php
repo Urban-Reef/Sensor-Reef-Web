@@ -33,7 +33,8 @@ Route::get('/dashboard', function () {
 
 //Resource Route for Reefs, automatically creates all CRUD routes.
 Route::resource('reefs', ReefController::class);
-Route::resource('session', MonitoringSessionController::class);
+Route::resource('reefs.session', MonitoringSessionController::class)->shallow()->except(['create']);
+Route::get('/reefs/{id}/monitor', [MonitoringSessionController::class, 'create'])->name('monitor');
 
 Route::middleware('auth')->group(function () {
     //Profile routes created during scaffolding
@@ -42,6 +43,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
-
 
 require __DIR__.'/auth.php';

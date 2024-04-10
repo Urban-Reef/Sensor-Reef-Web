@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMonitoringSessionRequest;
+use App\Models\Point;
+use App\Models\Reef;
 use Illuminate\Http\Request;
 
 class MonitoringSessionController extends Controller
@@ -15,9 +18,9 @@ class MonitoringSessionController extends Controller
     {
     }
 
-    public function store(Request $request)
+    public function store(StoreMonitoringSessionRequest $request)
     {
-
+       
     }
 
     public function show($id)

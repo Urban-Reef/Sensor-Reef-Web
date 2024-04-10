@@ -17,7 +17,7 @@ class MonitoringSessionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testStoringSession()
+    public function testOnStoringSessionSuccess()
     {
         Storage::fake('public');
         /* Create models in database for testing
@@ -85,13 +85,12 @@ class MonitoringSessionTest extends TestCase
             ]
         ];
         $data = [
-            'reefId' => $fakeReef->id,
             'points' => [$point0, $point1] //Index corresponds with point position.
         ];
 
-        $response = $this->post('/session', $data);
+        $response = $this->post(route('reefs.session.store', ['reef' => $fakeReef->id]), $data);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
         //Session created?
         $this->assertDatabaseHas('sessions', [
@@ -143,6 +142,63 @@ class MonitoringSessionTest extends TestCase
                 'count' => $entry['count']
             ]);
         }
+    }
+    public function testOnValidationFail()
+    {
+        $fakeReef = Reef::factory()
+            ->has(Point::factory(['position' => 0]))
+            ->has(Point::factory(['position' => 1])
+                ->has(Sensor::factory())
+            )
+            ->create();
+        //sort the points array based on position so position reflects the index.
+        $fakeReef->points->sortBy('position')->values();
 
+        $point0 = [
+            //Only 2 photos should be 3
+            'photos' => [
+                UploadedFile::fake()->image('left.jpg'),
+                UploadedFile::fake()->image('front.web'), //should not accept .web format
+            ],
+            'sample' => false, //sample should be prohibited on point 0
+            'sensors' => [["something"]], //sensor should be prohibited on point 0
+            'entries' => [
+                [
+                    'photo' => null, //photo should be required.
+                    'count' => null, //count should be required.
+                    'species' => 10 //should be a string
+                ],
+            ]
+        ];
+        $point1 = [
+            'photos' => [UploadedFile::fake()->image('closeUpPhoto.jpg'), UploadedFile::fake()->image('closeUpPhoto.jpg')], //should only accept 1 photo.
+            'sample' => null, //sample should be required and a bool.
+            'sensors' => [
+                [
+                    'id' => $fakeReef->points[1]['sensors'][0]->id + 1, //sensor ID should exist.
+                    'value' => 'notNumeric', //number should be numeric
+                    'measuredAt' => Carbon::now()
+                ]
+            ],
+            'entries' => 'notAnArray' // should be an array.
+        ];
+        $point2 = [
+            'photos' => 'notAnArray', //should be an array
+            'sample' => true, //sample should be required and a bool.
+            'sensors' => 'notAnArray',
+            'entries' => []
+        ];
+
+        $data = [
+            'points' => [$point0, $point1,$point2]
+        ];
+
+        $response = $this->post(route('reefs.session.store', ['reef' => $fakeReef->id]), $data);
+        $response->assertStatus(302)->assertSessionHasErrors([
+            'points.0.photos', 'points.0.sample', 'points.0.sensors',
+            'points.0.entries.0.photo', 'points.0.entries.0.count', 'points.0.entries.0.species',
+            'points.1.photos', 'points.1.sample', 'points.1.entries',
+            'points.2.photos', 'points.2.sensors'
+        ]);
     }
 }
