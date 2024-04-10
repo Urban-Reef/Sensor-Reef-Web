@@ -20,7 +20,7 @@ class MonitoringSession extends Model
     }
     public function pointPhotos(): HasMany
     {
-        return $this->hasMany(PointPhotos::class);
+        return $this->hasMany(PointPhoto::class);
     }
     public function biodiversityEntries(): HasMany
     {

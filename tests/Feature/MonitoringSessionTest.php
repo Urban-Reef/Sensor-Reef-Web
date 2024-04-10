@@ -104,14 +104,14 @@ class MonitoringSessionTest extends TestCase
         foreach ($point0['photos'] as $photo) {
             $this->assertDatabaseHas('point_photos', [
                 'point_id' => $fakeReef->points[0]->id,
-                'session_id' => $correctSessionId,
+                'monitoring_session_id' => $correctSessionId,
                 'url' => $photo->hashName()
             ]);
         }
         //assert biodiversity entries have been stored.
         foreach ($point0['entries'] as $entry) {
             $this->assertDatabaseHas('biodiversity_entries', [
-                'session_id' => $correctSessionId,
+                'monitoring_session_id' => $correctSessionId,
                 'point_id' => $fakeReef->points[0]->id,
                 'photo' => $entry['photo']->hashName(),
                 'species' => $entry['species'],
@@ -122,12 +122,12 @@ class MonitoringSessionTest extends TestCase
         //Point assertions (point 1)
         $this->assertDatabaseHas('point_photos', [
             'point_id' => $fakeReef->points[1]->id,
-            'session_id' => $correctSessionId,
+            'monitoring_session_id' => $correctSessionId,
             'url' => $point1['photos'][0]->hashName()
         ]);
         $this->assertDatabaseHas('samples', [
             'id' => $correctSampleId,
-            'session_id' => $correctSessionId,
+            'monitoring_session_id' => $correctSessionId,
             'point_id' => $fakeReef->points[1]->id,
         ]);
         $this->assertDatabaseHas('sensor_data', [
@@ -137,7 +137,7 @@ class MonitoringSessionTest extends TestCase
         ]);
         foreach ($point1['entries'] as $entry) {
             $this->assertDatabaseHas('biodiversity_entries', [
-                'session_id' => $correctSessionId,
+                'monitoring_session_id' => $correctSessionId,
                 'point_id' => $fakeReef->points[1]->id,
                 'photo' => $entry['photo']->hashName(),
                 'species' => $entry['species'],

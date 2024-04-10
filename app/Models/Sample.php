@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Sample extends Model
 {
     protected $fillable = [
-        'session_id',
+        'monitoring_session_id',
         'point_id'
     ];
 

@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PointPhotos extends Model
+class PointPhoto extends Model
 {
     protected $fillable = [
-        'url',
         'point_id',
-        'session_id'
+        'monitoring_session_id'
     ];
 
     protected function point(): BelongsTo
