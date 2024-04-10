@@ -43,6 +43,7 @@ class MonitoringSessionTest extends TestCase
         //data object has been broken up for the sake of readability.
         //Environment = point 0.
         $point0 = [
+            'id' => $fakeReef->points[0]->id,
             'photos' => [
                 UploadedFile::fake()->image('left.jpg'),
                 UploadedFile::fake()->image('front.jpg'),
@@ -62,6 +63,7 @@ class MonitoringSessionTest extends TestCase
             ]
         ];
         $point1 = [
+            'id' => $fakeReef->points[1]->id,
             'photos' => [UploadedFile::fake()->image('closeUpPhoto.jpg')],
             'sample' => true,
             'sensors' => [
@@ -136,7 +138,7 @@ class MonitoringSessionTest extends TestCase
         foreach ($point1['entries'] as $entry) {
             $this->assertDatabaseHas('biodiversity_entries', [
                 'session_id' => $correctSessionId,
-                'point_id' => $fakeReef->points[0]->id,
+                'point_id' => $fakeReef->points[1]->id,
                 'photo' => $entry['photo']->hashName(),
                 'species' => $entry['species'],
                 'count' => $entry['count']
@@ -156,6 +158,7 @@ class MonitoringSessionTest extends TestCase
 
         $point0 = [
             //Only 2 photos should be 3
+            'id' => null, //should be required.
             'photos' => [
                 UploadedFile::fake()->image('left.jpg'),
                 UploadedFile::fake()->image('front.web'), //should not accept .web format
@@ -171,6 +174,7 @@ class MonitoringSessionTest extends TestCase
             ]
         ];
         $point1 = [
+            'id' => 'notAnInteger', //should be an integer
             'photos' => [UploadedFile::fake()->image('closeUpPhoto.jpg'), UploadedFile::fake()->image('closeUpPhoto.jpg')], //should only accept 1 photo.
             'sample' => null, //sample should be required and a bool.
             'sensors' => [
@@ -183,6 +187,7 @@ class MonitoringSessionTest extends TestCase
             'entries' => 'notAnArray' // should be an array.
         ];
         $point2 = [
+            'id' => $fakeReef->points[1]->id + 1, //should not exist
             'photos' => 'notAnArray', //should be an array
             'sample' => true, //sample should be required and a bool.
             'sensors' => 'notAnArray',
@@ -195,10 +200,10 @@ class MonitoringSessionTest extends TestCase
 
         $response = $this->post(route('reefs.session.store', ['reef' => $fakeReef->id]), $data);
         $response->assertStatus(302)->assertSessionHasErrors([
-            'points.0.photos', 'points.0.sample', 'points.0.sensors',
+            'points.0.id', 'points.0.photos', 'points.0.sample', 'points.0.sensors',
             'points.0.entries.0.photo', 'points.0.entries.0.count', 'points.0.entries.0.species',
-            'points.1.photos', 'points.1.sample', 'points.1.entries',
-            'points.2.photos', 'points.2.sensors'
+            'points.1.id', 'points.1.photos', 'points.1.sample', 'points.1.entries',
+            'points.2.id', 'points.2.photos', 'points.2.sensors'
         ]);
     }
 }

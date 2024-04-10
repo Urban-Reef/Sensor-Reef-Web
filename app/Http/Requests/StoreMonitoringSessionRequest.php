@@ -9,6 +9,7 @@ class StoreMonitoringSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'points.*.id' => 'required|integer|exists:points,id', //point id should exist.
             'points.*.photos' => 'array|size:1', // 1 close-up photo per point
             'points.*.photos.*' => 'image|mimes:jpeg,png,jpg', // photo should be jpeg, png or jpg
             'points.*.sample' => 'required|boolean', //check if a sample has been taken yes/no
