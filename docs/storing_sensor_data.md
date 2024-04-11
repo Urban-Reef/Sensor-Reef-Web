@@ -37,11 +37,15 @@ When TTN receives sensor data it will [decode](https://github.com/Urban-Reef/Sen
         "decoded_payload": {
             "points": [
                 {
-                    "humidity": 47.5,
                     "position": 1,
+                    "humidity": 47.5,
                     "temperature": 20.1
                 },
-                //additional points
+                {
+                    "position": 2,
+                    "humidity": 42.0,
+                    "temperature": 19.8
+                }
             ],
             "reefId": 1
         }
