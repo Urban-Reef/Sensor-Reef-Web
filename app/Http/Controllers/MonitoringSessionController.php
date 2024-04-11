@@ -6,9 +6,11 @@ use App\Http\Requests\StoreMonitoringSessionRequest;
 use App\Models\BiodiversityEntry;
 use App\Models\MonitoringSession;
 use App\Models\PointPhoto;
+use App\Models\Reef;
 use App\Models\Sample;
 use App\Models\SensorData;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MonitoringSessionController extends Controller
 {
@@ -17,8 +19,16 @@ class MonitoringSessionController extends Controller
 
     }
 
-    public function create()
+    public function create($id)
     {
+        $reef = Reef::with(['points' => function ($query) {
+            $query->orderBy('position');
+            $query->with('sensors');
+        }])->findOrFail($id);
+
+        return Inertia::render('MonitoringSession/Create',[
+            'reef' => $reef
+        ]);
     }
 
     public function store(StoreMonitoringSessionRequest $request, $reef)
