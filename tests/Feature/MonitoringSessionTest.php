@@ -82,7 +82,7 @@ class MonitoringSessionTest extends TestCase
                 [
                     'photo' => UploadedFile::fake()->image('entry4.jpg'),
                     'count' => 4,
-                    'species' => 'woodlouse'
+                    'species' => null
                 ],
             ]
         ];
@@ -91,7 +91,6 @@ class MonitoringSessionTest extends TestCase
         ];
 
         $response = $this->post(route('reefs.session.store', ['reef' => $fakeReef->id]), $data);
-
         $response->assertStatus(302);
 
         //Session created?
