@@ -15,8 +15,8 @@ class SensorFactory extends Factory
     {
         return [
             'point_id' => Point::factory(),
-            'type' => $this->faker->word(),
-            'unit' => $this->faker->randomLetter(),
+            'type' => fake()->chemicalElement,
+            'unit' => fake()->chemicalElementSymbol,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

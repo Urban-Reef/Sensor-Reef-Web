@@ -23,14 +23,11 @@ class MonitoringSessionTest extends TestCase
         /* Create models in database for testing
          * Create a Reef with 2 points.
          * 1 point with position 0 for environmental monitoring.
-         * 1 point with a random position for point monitoring.
+         * 1 point with a sensor.
          */
-        $fakeReef = Reef::factory()
-            ->has(Point::factory(['position' => 1])
-                ->has(Sensor::factory())
-            )
-            ->has(Point::factory(['position' => 0]))
-            ->create();
+        $fakeReef = Reef::factory()->has(
+            Point::factory(['position' => 1])->hasSensors()
+        )->create();
         //sort the points array based on position so position reflects the index.
         $fakeReef->points->sortBy('position')->values();
 
@@ -53,12 +50,12 @@ class MonitoringSessionTest extends TestCase
                 [
                     'photo' => UploadedFile::fake()->image('entry1.jpg'),
                     'count' => 1,
-                    'species' => 'ant'
+                    'species' => fake()->plant
                 ],
                 [
                     'photo' => UploadedFile::fake()->image('entry2.jpg'),
                     'count' => 2,
-                    'species' => 'lichen'
+                    'species' => fake()->plant
                 ]
             ]
         ];
@@ -77,7 +74,7 @@ class MonitoringSessionTest extends TestCase
                 [
                     'photo' => UploadedFile::fake()->image('entry3.jpg'),
                     'count' => 3,
-                    'species' => 'spider'
+                    'species' => fake()->plant
                 ],
                 [
                     'photo' => UploadedFile::fake()->image('entry4.jpg'),
@@ -147,10 +144,7 @@ class MonitoringSessionTest extends TestCase
     public function testOnValidationFail()
     {
         $fakeReef = Reef::factory()
-            ->has(Point::factory(['position' => 0]))
-            ->has(Point::factory(['position' => 1])
-                ->has(Sensor::factory())
-            )
+            ->has(Point::factory(['position' => 1])->hasSensors())
             ->create();
         //sort the points array based on position so position reflects the index.
         $fakeReef->points->sortBy('position')->values();
@@ -186,7 +180,7 @@ class MonitoringSessionTest extends TestCase
             'entries' => 'notAnArray' // should be an array.
         ];
         $point2 = [
-            'id' => $fakeReef->points[1]->id + 1, //should not exist
+            'id' => Point::max('id') + 1, //should not exist
             'photos' => 'notAnArray', //should be an array
             'sample' => true, //sample should be required and a bool.
             'sensors' => 'notAnArray',
