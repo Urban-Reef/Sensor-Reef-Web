@@ -3,7 +3,7 @@ import ButtonIcon from "@/Components/ButtonIcon.vue";
 import {computed} from "vue";
 
 const image = defineModel();
-const props = defineProps({name: String});
+const props = defineProps({name: String, hideLabel: Boolean});
 const imageURL = computed(() => {
     return URL.createObjectURL(image.value);
 })
@@ -17,7 +17,7 @@ const handleUpload = (event) => {
 
 <template>
     <div>
-        <label :for="name">{{name}}</label>
+        <label v-show="!props.hideLabel" :for="name">{{name}}</label>
         <div v-show="!image" class="container">
             <ButtonIcon icon="upload" theme="dark" @click="$refs.uploadInput.click()"/>
             <ButtonIcon icon="photo_camera" theme="dark" @click="takePhoto" />
