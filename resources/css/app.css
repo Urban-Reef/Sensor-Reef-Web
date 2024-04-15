@@ -57,3 +57,6 @@ input {
 input[type='file'] {
     border: initial;
 }
+.error {
+    color: red;
+}

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReefController;
 use App\Http\Controllers\MonitoringSessionController;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -33,7 +34,11 @@ Route::get('/dashboard', function () {
 
 //Resource Route for Reefs, automatically creates all CRUD routes.
 Route::resource('reefs', ReefController::class);
-Route::resource('reefs.session', MonitoringSessionController::class)->shallow()->except(['create']);
+
+Route::resource('reefs.session', MonitoringSessionController::class)->shallow()->except(['create', 'store']);
+Route::post('/reefs/{id}/session', [MonitoringSessionController::class, 'store'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('reefs.session.store');
 Route::get('/reefs/{id}/monitor', [MonitoringSessionController::class, 'create'])->name('monitor');
 
 Route::middleware('auth')->group(function () {

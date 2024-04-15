@@ -10,8 +10,8 @@ class StoreMonitoringSessionRequest extends FormRequest
     {
         return [
             'points.*.id' => 'required|integer|exists:points,id', //point id should exist.
-            'points.*.photos' => 'array|size:1', // 1 close-up photo per point
-            'points.*.photos.*' => 'image|mimes:jpeg,png,jpg', // photo should be jpeg, png or jpg
+            'points.*.photos' => 'required|array|size:1', // 1 close-up photo per point
+            'points.*.photos.*' => 'required|image|mimes:jpeg,png,jpg', // photo should be jpeg, png or jpg
             'points.*.sample' => 'required|boolean', //check if a sample has been taken yes/no
             'points.*.sensors' => 'present|nullable|array', //sensor array is allowed to be empty if no sensors exist.
             'points.*.sensors.*.id' => 'required|integer|exists:sensors', //ID is required.
@@ -22,8 +22,8 @@ class StoreMonitoringSessionRequest extends FormRequest
             'points.*.entries.*.species' => 'nullable|string', //species is allowed to be empty if person does not know.
 
             'points.0.photos' => 'required|array|size:3', //collecting
-            'points.0.sample' => 'prohibited', //not collecting samples for environment
-            'points.0.sensors' => 'prohibited', //environment does not have sensors
+            'points.0.sample' => 'exclude', //not collecting samples for environment
+            'points.0.sensors' => 'exclude', //environment does not have sensors
         ];
     }
 }

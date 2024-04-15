@@ -150,14 +150,14 @@ class MonitoringSessionTest extends TestCase
         $fakeReef->points->sortBy('position')->values();
 
         $point0 = [
-            //Only 2 photos should be 3
             'id' => null, //should be required.
+            //Only 2 photos should be 3
             'photos' => [
-                UploadedFile::fake()->image('left.jpg'),
+                null, //photo is required.
                 UploadedFile::fake()->image('front.web'), //should not accept .web format
             ],
-            'sample' => false, //sample should be prohibited on point 0
-            'sensors' => [["something"]], //sensor should be prohibited on point 0
+            'sample' => false, //sample will be excluded.
+            'sensors' => [["something"]], //sensor will be excluded.
             'entries' => [
                 [
                     'photo' => null, //photo should be required.
@@ -168,7 +168,7 @@ class MonitoringSessionTest extends TestCase
         ];
         $point1 = [
             'id' => 'notAnInteger', //should be an integer
-            'photos' => [UploadedFile::fake()->image('closeUpPhoto.jpg'), UploadedFile::fake()->image('closeUpPhoto.jpg')], //should only accept 1 photo.
+            'photos' => [UploadedFile::fake()->image('closeUpPhoto.png'), UploadedFile::fake()->image('closeUpPhoto.jpg')], //, should only accept 1 photo.
             'sample' => null, //sample should be required and a bool.
             'sensors' => [
                 [
@@ -193,10 +193,12 @@ class MonitoringSessionTest extends TestCase
 
         $response = $this->post(route('reefs.session.store', ['reef' => $fakeReef->id]), $data);
         $response->assertStatus(302)->assertSessionHasErrors([
-            'points.0.id', 'points.0.photos', 'points.0.sample', 'points.0.sensors',
+            'points.0.id', 'points.0.photos',
+            'points.0.photos.0', 'points.0.photos.1',
             'points.0.entries.0.photo', 'points.0.entries.0.count', 'points.0.entries.0.species',
             'points.1.id', 'points.1.photos', 'points.1.sample', 'points.1.entries',
             'points.2.id', 'points.2.photos', 'points.2.sensors'
         ]);
+        dump(session('errors')->all());
     }
 }

@@ -149,15 +149,13 @@ watch(() => form.errors, () => {
             <Button theme="light" type="button" @click="addPoint">Add Point</Button>
             <Button theme="light" id="submit" type="submit" :disabled="form.processing">Submit</Button>
         </section>
+
     </form>
 </template>
 
 <style scoped>
     input {
         text-align: right;
-    }
-    .error {
-        color: red;
     }
 
     #general-information {

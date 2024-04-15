@@ -18,6 +18,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "laravel-precognition-vue-inertia": "^0.5.4",
         "leaflet": "^1.9.4",
         "normalize.css": "^8.0.1"
     }
