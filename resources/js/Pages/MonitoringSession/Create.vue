@@ -23,6 +23,7 @@ function createFormPoint(point) {
         entries: [],
     }
 }
+form.validateFiles();
 provide('form', form);
 
 </script>

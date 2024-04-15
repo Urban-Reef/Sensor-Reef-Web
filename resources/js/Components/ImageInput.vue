@@ -1,7 +1,8 @@
 <script setup>
 import ButtonIcon from "@/Components/ButtonIcon.vue";
-import {computed} from "vue";
+import {computed, defineEmits} from "vue";
 
+const emit = defineEmits(['upload']);
 const image = defineModel();
 const props = defineProps({name: String, hideLabel: Boolean});
 const imageURL = computed(() => {
@@ -12,6 +13,7 @@ const takePhoto = () => {
 }
 const handleUpload = (event) => {
     image.value = event.target.files[0];
+    emit('upload');
 }
 </script>
 
