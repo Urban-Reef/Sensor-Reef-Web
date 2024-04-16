@@ -1,6 +1,7 @@
 <script setup>
 import ImageInput from "@/Components/ImageInput.vue";
 import {inject} from "vue";
+import Biodiversity from "@/Components/monitoring/BiodiversityEntry.vue";
 
 //TODO: Injecting and model binding? There has to be a better way.
 //inject form for precognitive methods.
@@ -46,7 +47,7 @@ const props = defineProps({pointIndex: Number, sensors: Object});
                     {{ validation.getError(`points.${pointIndex}.sensors.${sensorIndex}`) }}</p>
             </div>
         </div>
-        <!--            TODO: Biodiversity monitoring component-->
+        <Biodiversity :point-index="pointIndex"/>
     </section>
 </template>
 <style scoped>

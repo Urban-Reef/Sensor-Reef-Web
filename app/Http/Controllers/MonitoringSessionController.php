@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BiodiversityEntryRequest;
 use App\Http\Requests\StoreMonitoringSessionRequest;
 use App\Models\BiodiversityEntry;
 use App\Models\MonitoringSession;
@@ -93,6 +94,10 @@ class MonitoringSessionController extends Controller
 
         //Redirect to session index.
         return redirect(route('reefs.session.index', ['reef' => $reef]));
+    }
+
+    public function validateBiodiversityEntry(BiodiversityEntryRequest $request){
+
     }
 
     public function show($id)

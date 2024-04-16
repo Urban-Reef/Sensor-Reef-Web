@@ -40,6 +40,10 @@ Route::post('/reefs/{id}/session', [MonitoringSessionController::class, 'store']
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('reefs.session.store');
 Route::get('/reefs/{id}/monitor', [MonitoringSessionController::class, 'create'])->name('monitor');
+//route to validate a single biodiversity entry before placing it in the dedicated form object.
+Route::post('/session/validateBiodiversityEntry', [MonitoringSessionController::class, 'validateBiodiversityEntry'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('validate-biodiversity-entry');
 
 Route::middleware('auth')->group(function () {
     //Profile routes created during scaffolding

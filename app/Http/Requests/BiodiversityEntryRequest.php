@@ -9,9 +9,9 @@ class BiodiversityEntryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo' => ['required' || 'file'],
-            'species' => ['nullable' || 'string'],
-            'count' => ['required', 'integer'],
+            'photo' => 'required|image|mimes:jpeg,jpg,png',
+            'count' => 'required|integer',
+            'species' => 'nullable|string', //species is allowed to be empty if person does not know.
         ];
     }
 

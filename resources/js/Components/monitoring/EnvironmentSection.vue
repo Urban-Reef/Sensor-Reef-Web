@@ -1,6 +1,7 @@
 <script setup>
 import ImageInput from "@/Components/ImageInput.vue";
 import {inject} from "vue";
+import Biodiversity from "@/Components/monitoring/BiodiversityEntry.vue";
 
 //inject form for precognitive methods.
 const validation = inject('validation');
@@ -10,7 +11,7 @@ const point = defineModel();
 <template>
     <section>
         <h2>Environment</h2>
-        <div class="subsection">
+        <div class="subsection photos">
             <h2>Wide angle photos</h2>
             <ImageInput name="left"
                         v-model:image="point.photos[0]"
@@ -30,16 +31,17 @@ const point = defineModel();
             <p class="error" v-if="validation.invalid('points.0.photos.2')">
                 {{ validation.getError('points.0.photos.2') }}
             </p>
-            <!--        TODO: biodiversity monitoring component-->
         </div>
+        <Biodiversity :point-index="0"/>
     </section>
 </template>
 <style scoped>
-.error {
-    align-self: center;
-    margin: 0;
-}
-.subsection {
+.photos {
     gap: var(--subsection-padding);
+
+    .error {
+        align-self: center;
+        margin: 0;
+    }
 }
 </style>

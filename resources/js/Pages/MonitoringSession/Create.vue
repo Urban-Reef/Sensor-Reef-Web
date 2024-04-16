@@ -6,10 +6,10 @@ import Button from "@/Components/Button.vue";
 import {provide} from "vue";
 
 const props = defineProps(['reef']);
+
 const form = useForm('post', route('reefs.session.store', props.reef.id), {
     points: props.reef.points.map(createFormPoint)
 });
-
 function createFormPoint(point) {
     return {
         id: point.id,
@@ -23,6 +23,9 @@ function createFormPoint(point) {
         }),
         entries: [],
     }
+}
+function addBiodiversityEntry(pointIndex, entry) {
+    form.points[pointIndex].entries.push(entry)
 }
 
 form.validateFiles();
@@ -39,6 +42,7 @@ provide('validation', {
         return form.errors[name]
     }
 });
+provide('addBiodiversityEntry', addBiodiversityEntry);
 
 </script>
 
