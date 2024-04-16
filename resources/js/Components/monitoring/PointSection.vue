@@ -2,34 +2,35 @@
 import ImageInput from "@/Components/ImageInput.vue";
 import {inject} from "vue";
 
-//TODO: Injecting and modelling?!?
-const form = inject('form');
-const point = defineModel();
+//TODO: Injecting and model binding? There has to be a better way.
+//inject form for precognitive methods.
+const validation = inject('validation');
+const point = defineModel('point');
 const props = defineProps({pointIndex: Number, sensors: Object});
 
 </script>
 <template>
-    <!--    TODO: Add validation messages-->
     <section>
         <h2>Point {{ pointIndex }}</h2>
         <div class="subsection close-up">
             <h2>Close-Up</h2>
             <ImageInput :name="`close-up point ${pointIndex}`"
-                        v-model="point.photos[0]"
-                        @upload="form.validate(`points.${pointIndex}.photos.0`)"
+                        v-model:image="point.photos[0]"
+                        @upload="validation.validate(`points.${pointIndex}.photos.0`)"
                         hide-label/>
-            <p class="error" v-show="form.invalid(`points.${pointIndex}.photos.0`)">
-                {{ form.errors[`points.${pointIndex}.photos.0`] }}</p>
+            <p class="error" v-if="validation.invalid(`points.${pointIndex}.photos.0`)">
+                {{ validation.getError(`points.${pointIndex}.photos.0`) }}</p>
         </div>
         <div class="subsection sample">
-            <label :for="`sample point ${pointIndex}`">Sample taken?</label>
+            <label :for="`samplePoint${pointIndex}`">Sample taken?</label>
             <input type="checkbox"
-                   :id="`sample point ${pointIndex}`"
+                   :id="`samplePoint${pointIndex}`"
                    v-model="point.sample"
-                   @change="form.validate(`points.${pointIndex}.sample`)"
-            />
-            <p class="error" v-if="form.invalid(`points.${pointIndex}.sample`)">
-                {{ form.errors[`points.${pointIndex}.sample`] }}</p>
+                   true-value="1"
+                   false-value="0"
+                   @change="validation.validate(`points.${pointIndex}.sample`)"/>
+            <p class="error" v-if="validation.invalid(`points.${pointIndex}.sample`)">
+                {{ validation.getError(`points.${pointIndex}.sample`) }}</p>
         </div>
         <div class="subsection climate">
             <h2>Climate Data</h2>
@@ -37,10 +38,9 @@ const props = defineProps({pointIndex: Number, sensors: Object});
                 <label :for="`sensor${formSensor.id}`">{{ sensors[sensorIndex].type }}</label>
                 <input type="number" step="0.1"
                        v-model="formSensor.value"
-                       @change="form.validate(`points.${pointIndex}.sensors.${sensorIndex}`)"
-                />
-                <p class="error" v-if="form.invalid(`points.${pointIndex}.sensors.${sensorIndex}`)">
-                    {{ form.errors[`points.${pointIndex}.sensors.${sensorIndex}`] }}</p>
+                       @change="validation.validate(`points.${pointIndex}.sensors.${sensorIndex}`)"/>
+                <p class="error" v-if="validation.invalid(`points.${pointIndex}.sensors.${sensorIndex}`)">
+                    {{ validation.getError(`points.${pointIndex}.sensors.${sensorIndex}`) }}</p>
             </div>
         </div>
         <!--            TODO: Biodiversity monitoring component-->

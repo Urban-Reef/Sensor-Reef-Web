@@ -3,13 +3,13 @@ import ButtonIcon from "@/Components/ButtonIcon.vue";
 import {computed, defineEmits} from "vue";
 
 const emit = defineEmits(['upload']);
-const image = defineModel();
+const image = defineModel('image');
 const props = defineProps({name: String, hideLabel: Boolean});
 const imageURL = computed(() => {
     return URL.createObjectURL(image.value);
 })
 const takePhoto = () => {
-
+    //TODO: Program logic to take a photo instead of uploading.
 }
 const handleUpload = (event) => {
     image.value = event.target.files[0];
@@ -25,7 +25,7 @@ const handleUpload = (event) => {
             <ButtonIcon icon="photo_camera" theme="dark" @click="takePhoto" />
             <input ref="uploadInput" :id="name" :name="name" type="file" accept="image/jpeg, image/jpg, image/png" @change="handleUpload($event)"/>
         </div>
-        <img v-if="image" alt="uploaded diagram" :src="imageURL">
+        <img v-if="image" :alt="name" :src="imageURL">
     </div>
 </template>
 
