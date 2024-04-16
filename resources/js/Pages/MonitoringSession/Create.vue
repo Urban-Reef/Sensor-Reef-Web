@@ -49,6 +49,25 @@ provide('validation', {
             <PointSection v-else :key="point.id" v-model:point="form.points[pointIndex]"
                           :point-index="pointIndex" :sensors="reef.points[pointIndex].sensors"/>
         </template>
+        <section id="submit">
         <Button :disabled="form.processing" theme="dark" type="submit">Save</Button>
+        </section>
     </form>
 </template>
+<style scoped>
+#submit {
+    width: min(
+        /* Small screens: 100% - margin to align button to side */
+        100% - var(--section-margin) * 2,
+            /* Large screens: 75ch + padding * 4 to align button to side.*/
+        75ch + (var(--section-padding)) * 4
+    );
+    margin-top: 0;
+    padding: 0;
+    background: none;
+
+    button {
+        align-self: end;
+    }
+}
+</style>

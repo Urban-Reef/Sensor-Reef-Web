@@ -31,7 +31,7 @@ section {
     --section-margin: 1rem;
 
     width: min(
-        /* Small screens: 100% - padding and with for both sides */
+        /* Small screens: 100% - padding and margin for both sides */
         100% - (var(--section-padding) + var(--section-margin)) * 2,
         /* Large screens: 75ch + padding for both sides*/
         75ch + var(--section-padding) * 2
