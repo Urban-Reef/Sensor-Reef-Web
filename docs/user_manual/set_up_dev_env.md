@@ -15,7 +15,7 @@ sudo apt upgrade
 ```
 - next install essential packages:
 ```
-sudo apt install build-essentials curl file git git-core
+sudo apt install build-essential curl file git git-core
 ```
 - install ohmyzsh (optional)
 ```
