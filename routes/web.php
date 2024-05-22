@@ -18,7 +18,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+/* Auth routes disabled as there are no pages.
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -27,6 +27,13 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::middleware('auth')->group(function () {
+    //Profile routes created during scaffolding
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});*/
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -44,13 +51,5 @@ Route::get('/reefs/{id}/monitor', [MonitoringSessionController::class, 'create']
 Route::post('/session/validateBiodiversityEntry', [MonitoringSessionController::class, 'validateBiodiversityEntry'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('validate-biodiversity-entry');
-
-Route::middleware('auth')->group(function () {
-    //Profile routes created during scaffolding
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-});
 
 require __DIR__.'/auth.php';
