@@ -16,7 +16,7 @@ class StoreMonitoringSessionRequest extends FormRequest
             'points.*.sensors' => 'present|nullable|array', //sensor array is allowed to be empty if no sensors exist.
             'points.*.sensors.*.id' => 'required|integer|exists:sensors', //ID is required.
             'points.*.sensors.*.value' => 'present|nullable|numeric', //Should be present but is allowed to be null.
-            'points.*.entries' => 'present|nullable|array', //entries allowed to be null if no organisms are spotted.
+            'points.*.entries' => 'nullable|array', //entries allowed to be null if no organisms are spotted.
             'points.*.entries.*.photo' => 'required|image|mimes:jpeg,jpg,png',
             'points.*.entries.*.count' => 'required|integer',
             'points.*.entries.*.species' => 'nullable|string', //species is allowed to be empty if person does not know.

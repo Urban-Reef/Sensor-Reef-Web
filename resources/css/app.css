@@ -42,12 +42,20 @@ section {
     gap: var(--section-padding);
 
     background: var(--light-green);
+
+    h2 {
+        color: var(--white);
+    }
 }
 .subsection {
     --subsection-padding: 1rem;
 
     padding: var(--subsection-padding);
     background: var(--white);
+
+    h2 {
+        color: var(--black);
+    }
 }
 
 input {

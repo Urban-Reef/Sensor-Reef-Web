@@ -15,9 +15,11 @@ use Inertia\Inertia;
 
 class MonitoringSessionController extends Controller
 {
-    public function index()
+    public function index($reef)
     {
+        $sessions = MonitoringSession::where('reef_id', '=',$reef)->get();
 
+        return $sessions;
     }
 
     public function create($id)
@@ -53,20 +55,22 @@ class MonitoringSessionController extends Controller
             }
 
             //Loop through entries.
-            foreach ($point['entries'] as $entry){
-                //Create new entry
-                $newEntry = new BiodiversityEntry;
-                $newEntry->point_id = $point['id'];
-                $newEntry->monitoring_session_id = $monitoringSession->id;
-                $newEntry->count = $entry['count'];
-                //check if species is not null
-                if (isset($entry['species'])){
-                    $newEntry->species = $entry['species'];
+            if (isset($point['entries'])) {
+                foreach ($point['entries'] as $entry) {
+                    //Create new entry
+                    $newEntry = new BiodiversityEntry;
+                    $newEntry->point_id = $point['id'];
+                    $newEntry->monitoring_session_id = $monitoringSession->id;
+                    $newEntry->count = $entry['count'];
+                    //check if species is not null
+                    if (isset($entry['species'])) {
+                        $newEntry->species = $entry['species'];
+                    }
+                    //store image on disc and store URL in database.
+                    $newEntry->photo = $entry['photo']->storeAs('/', $entry['photo']->hashName(), 'public');
+                    //insert entry into database.
+                    $newEntry->save();
                 }
-                //store image on disc and store URL in database.
-                $newEntry->photo = $entry['photo']->storeAs('/', $entry['photo']->hashName(), 'public');
-                //insert entry into database.
-                $newEntry->save();
             }
 
             //Create sample if true. Point 0 does not have this field set.

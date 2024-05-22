@@ -24,9 +24,6 @@ function createFormPoint(point) {
         entries: [],
     }
 }
-function addBiodiversityEntry(pointIndex, entry) {
-    form.points[pointIndex].entries.push(entry)
-}
 
 form.validateFiles();
 
@@ -42,12 +39,23 @@ provide('validation', {
         return form.errors[name]
     }
 });
-provide('addBiodiversityEntry', addBiodiversityEntry);
+provide('parentForm', {
+    addBiodiversityEntry(pointIndex, entry) {
+        form.points[pointIndex].entries.push(entry)
+    },
+    getBiodiversityEntries(pointIndex) {
+        return form.points[pointIndex].entries
+    }
+});
 
 </script>
 
 <template>
-    <form novalidate @submit.prevent="form.submit()">
+    <form novalidate @submit.prevent="form.submit({
+    onSuccess: () => {
+        alert('Success!');
+    }
+    })">
         <template v-for="(point, pointIndex) in form.points">
             <EnvironmentSection v-if="pointIndex === 0" :key="point.id" v-model="form.points[pointIndex]"/>
             <PointSection v-else :key="point.id" v-model:point="form.points[pointIndex]"
