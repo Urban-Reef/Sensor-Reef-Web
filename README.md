@@ -15,8 +15,8 @@ Other related projects are:
 
 ## Features
 Current and planned features of the web app are:
-- [x] [Storing sensor data](./docs/storing_sensor_data).
-- [ ] Storing data collected during monitoring sessions.
+- [x] [Storing sensor data](./docs/storing_sensor_data.md).
+- [ ] [Storing data collected during monitoring sessions](./docs/monitoring_sessions.md).
 - [ ] Managing Reefs and their data.
 - [ ] Request data through API or UI
 - [ ] Data visualisation
